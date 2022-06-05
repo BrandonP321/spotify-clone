@@ -6,5 +6,12 @@ export default StyleSheet.create({
         paddingTop: uiBase.padding.appTopPadding,
         paddingBottom: uiBase.padding.appBottomPadding,
         // backgroundColor: uiBase.colors.appBg,
+    },
+    fixedContent: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
     }
 })

@@ -7,11 +7,14 @@ import { uiBase } from '../UI/styles/uiBase.style';
 import FloatingMusicPlayer from '../UI/Components/FloatingMusicPlayer/FloatingMusicPlayer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenUtils } from '../../utils/ScreenUtils';
+import AuthLoadingScreen from '../../Screens/AuthLoadingScreen/AuthLoadingScreen';
+import { navigationRef } from '../../utils/NavigationHelper';
+import ArtistScreen from '../../Screens/ArtistScreen/ArtistScreen';
 
 export default function Navigation() {
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <FloatingMusicPlayer/>
       <TabNavigator />
     </NavigationContainer>
@@ -52,7 +55,7 @@ const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
 
   return (
-    <Tab.Navigator initialRouteName={"Home"} sceneContainerStyle={{ backgroundColor: "rgba(0, 0, 0, 0)" }} screenOptions={({ route }) => ({
+    <Tab.Navigator initialRouteName={"AuthLoading"} sceneContainerStyle={{ backgroundColor: "rgba(0, 0, 0, 0)" }} screenOptions={({ route }) => ({
       header: () => null,
       tabBarStyle: styles.tabBar,
       tabBarIconStyle: styles.tabIcon,
@@ -64,7 +67,9 @@ const TabNavigator = () => {
         />
       )
     })}>
-      <Tab.Screen name={"Home"} component={HomeScreen} options={{}} />
+      <Tab.Screen name={"AuthLoading"} component={AuthLoadingScreen} options={{ tabBarButton: () => null }}/>
+      <Tab.Screen name={"Home"} component={HomeScreen} options={{}}/>
+      <Tab.Screen name={"Artist"} component={ArtistScreen} options={{ tabBarButton: () => null }}/>
     </Tab.Navigator>
   )
 }

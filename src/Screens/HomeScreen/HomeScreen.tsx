@@ -1,51 +1,38 @@
-import React from 'react'
-import { View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
-import ActionCard, { ArtistActionCard } from '../../global/UI/Components/ActionCard/ActionCard'
+import { ScreenProps } from '../../global/Navigation/Screens'
+import { ArtistActionCard } from '../../global/UI/Components/ActionCard/ActionCard'
 import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScrollWrapper/HorizontalScrollWrapper'
+import { SpotifyArtist, SpotifyFetcher } from '../../utils/SpotifyFetcher'
 
-const mockData = {
-    recents: [
-        { img: "https://musicrow.com/wp-content/uploads/2020/02/BORN-HERE-LIVE-HERE-DIE-HERE-COVER-Jim-Wright.jpg", title: "some title", blurb: "Stay focused with electronic and trap beats." },
-        { img: "https://musicrow.com/wp-content/uploads/2020/02/BORN-HERE-LIVE-HERE-DIE-HERE-COVER-Jim-Wright.jpg", title: "some title", blurb: "Stay focused with electronic and trap beats." },
-        { img: "https://musicrow.com/wp-content/uploads/2020/02/BORN-HERE-LIVE-HERE-DIE-HERE-COVER-Jim-Wright.jpg", title: "some title", blurb: "Stay focused with electronic and trap beats." },
-        { img: "https://musicrow.com/wp-content/uploads/2020/02/BORN-HERE-LIVE-HERE-DIE-HERE-COVER-Jim-Wright.jpg", title: "some title", blurb: "Stay focused with electronic and trap beats." },
-        { img: "https://musicrow.com/wp-content/uploads/2020/02/BORN-HERE-LIVE-HERE-DIE-HERE-COVER-Jim-Wright.jpg", title: "some title", blurb: "Stay focused with electronic and trap beats." },
-        { img: "https://musicrow.com/wp-content/uploads/2020/02/BORN-HERE-LIVE-HERE-DIE-HERE-COVER-Jim-Wright.jpg", title: "some title", blurb: "Stay focused with electronic and trap beats." },
-    ]
+type HomeScreenProps = ScreenProps<"Home">
+
+type HomePageData = {
+  favoriteArtists?: SpotifyArtist[];
 }
 
-type HomeScreenProps = {}
-
 export default function HomeScreen(props: HomeScreenProps) {
+  const [data, setData] = useState<HomePageData | null>(null);
+
+  useEffect(() => {
+    SpotifyFetcher.getTopArtists()
+      .then(res => {
+        updateDataState({ favoriteArtists: res?.items })
+      }).catch((err) => {
+        console.log(JSON.stringify(err, null, 2));
+      })
+  }, [props.navigation]);
+
+  const updateDataState = useCallback((newData: { [key in keyof HomePageData]: HomePageData[key] }) => {
+    setData({ ...(data ?? {}), ...(newData ?? {}) });
+  }, [data])
 
   return (
     <ScreenWrapper>
       <HorizontalScrollWrapper heading={"Good evening"}>
-        {mockData.recents.map((recent, i) => {
+        {data?.favoriteArtists?.map((artist, i) => {
           return (
-            <ArtistActionCard key={i} title={recent.title} blurb={recent.blurb} img={recent.img} withoutRightMargin={i === mockData.recents.length - 1}/>
-          )
-        })}
-      </HorizontalScrollWrapper>
-      <HorizontalScrollWrapper heading={"Good evening"}>
-        {mockData.recents.map((recent, i) => {
-          return (
-            <ArtistActionCard key={i} title={recent.title} blurb={recent.blurb} img={recent.img} withoutRightMargin={i === mockData.recents.length - 1}/>
-          )
-        })}
-      </HorizontalScrollWrapper>
-      <HorizontalScrollWrapper heading={"Good evening"}>
-        {mockData.recents.map((recent, i) => {
-          return (
-            <ArtistActionCard key={i} title={recent.title} blurb={recent.blurb} img={recent.img} withoutRightMargin={i === mockData.recents.length - 1}/>
-          )
-        })}
-      </HorizontalScrollWrapper>
-      <HorizontalScrollWrapper heading={"Good evening"}>
-        {mockData.recents.map((recent, i) => {
-          return (
-            <ArtistActionCard key={i} title={recent.title} blurb={recent.blurb} img={recent.img} withoutRightMargin={i === mockData.recents.length - 1}/>
+            <ArtistActionCard key={i} artistData={artist} withoutRightMargin={i === (data?.favoriteArtists?.length ?? 0) - 1}/>
           )
         })}
       </HorizontalScrollWrapper>

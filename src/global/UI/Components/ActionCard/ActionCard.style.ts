@@ -26,7 +26,7 @@ export default StyleSheet.create({
     title: {
         color: uiBase.colors.textPrimary,
         fontWeight: "700",
-        fontSize: 16
+        fontSize: 14
     },
     blurb: {
         marginTop: 2,

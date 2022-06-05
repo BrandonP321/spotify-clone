@@ -1,5 +1,9 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react'
 import { Image, ImageStyle, Pressable, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { SpotifyArtist } from '../../../../utils';
+import { NavigationHelper, useAppNavigation } from '../../../../utils/NavigationHelper';
+import { RootStackParamList } from '../../../Navigation/Screens';
 import styles from "./ActionCard.style";
 
 type ActionCardProps = {
@@ -47,14 +51,26 @@ export default function ActionCard(props: ActionCardProps) {
     )
 }
 
-type ArtistActionCardProps = ActionCardProps & {
-
+type ArtistActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRightMargin"> & {
+    artistData: SpotifyArtist;
 }
 
 export const ArtistActionCard = (props: ArtistActionCardProps) => {
-    const { customStyles, blurb, ...rest } = props;
+    const { customStyles, artistData, ...rest } = props;
+
+    const navigation = useAppNavigation();
+
+    const handlePress = () => {
+        navigation.navigate("Artist", { artistId: artistData?.id })
+    }
 
     return (
-        <ActionCard {...rest} customStyles={{ ...customStyles, img: styles.artistCard, title: styles.artistCardTitle }}/>
+        <ActionCard 
+            {...rest} 
+            onPress={handlePress}
+            customStyles={{ ...customStyles, img: styles.artistCard, title: styles.artistCardTitle }}
+            title={artistData?.name}
+            img={artistData?.images?.[0]?.url}
+        />
     )
 }
