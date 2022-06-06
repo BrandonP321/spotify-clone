@@ -37,8 +37,8 @@ export class AuthUtils {
     public static openAuthWindow = async () => {
         const scope = "user-read-private%20user-read-email%20user-top-read";
         const clientId = "13786cced89e4dba9de0f15126c86c1f";
-        const redirectURI = Linking.createURL("");    
-
+        const redirectURI = Linking.createURL("");  
+        
         type BrowserResponse = WebBrowser.WebBrowserAuthSessionResult & { url?: string };
 
         const { url } = await WebBrowser.openAuthSessionAsync(`https://accounts.spotify.com/authorize?response_type=code&client_id=${clientId}&scope=${scope}&redirect_uri=${redirectURI}`, redirectURI) as BrowserResponse;

@@ -1,12 +1,12 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useState } from 'react'
-import { Image, ImageBackground, NativeScrollEvent, NativeSyntheticEvent, Pressable, Text, View } from 'react-native'
+import { Image, ImageBackground, NativeScrollEvent, NativeSyntheticEvent, Pressable, StyleProp, Text, View, ViewStyle } from 'react-native'
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
 import { ScreenProps } from '../../global/Navigation/Screens'
 import SimpleHeader, { SimpleHeaderProps } from '../../global/UI/Components/SimpleHeader/SimpleHeader';
 import { SpotifyArtist, SpotifyFetcher } from '../../utils';
-import styles, { artistImgWrapperHeight } from "./ArtistScreen.style";
+import styles, { artistImgWrapperHeight, playIconPositionTop } from "./ArtistScreen.style";
 import PlayIcon from "../../../assets/play-solid.svg";
 import { uiBase } from '../../global/UI/styles/uiBase.style';
 
@@ -23,6 +23,7 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     const [gradientColors, setGradientColors] = useState({ imgTop: gradientColor(0.15), imgBottom: gradientColor(0.15, 0), contentTop: gradientColor(0.15, 1) });
     const [headerColors, setHeaderColors] = useState({ headerBg: gradientColor(0.25, 0), backArrowBg: backArrowColor(0.3), title: headerTitleColor(0) })
     const [imgGradientOpacity, setImgGradientOpacity] = useState(0);
+    const [playBtnPosition, setPlayBtnPosition] = useState(playIconPositionTop)
 
     useFocusEffect(useCallback(() => {
         SpotifyFetcher.getArtist(artistId)
@@ -38,6 +39,7 @@ export default function ArtistScreen(props: ArtistScreenProps) {
 
         updateGradientColors(scrollOffset);
         updateHeaderColors(scrollOffset);
+        updatePlayIconPosition(scrollOffset);
     }, [])
 
     const updateGradientColors = (scrollOffset: number) => {
@@ -62,6 +64,10 @@ export default function ArtistScreen(props: ArtistScreenProps) {
         setHeaderColors({ headerBg, backArrowBg, title: titleColor })
     }
 
+    const updatePlayIconPosition = (scrollOffset: number) => {
+        setPlayBtnPosition(playIconPositionTop - scrollOffset);
+    }
+
     const handlePlayBtnPress = () => {
         alert("play artist music");
     }
@@ -72,47 +78,62 @@ export default function ArtistScreen(props: ArtistScreenProps) {
         title: { color: headerColors.title }
     }
 
+    const playIconStyle: StyleProp<ViewStyle> = {
+        top: playBtnPosition,
+    }
+
     return (
         <ScreenWrapper
             style={styles.artistScreen}
-            fixedContent={<ArtistScreenFixedContent img={data?.images?.[0]?.url} title={data?.name} headerStyles={headerStyles} onPlayBtnClick={handlePlayBtnPress}/>}
             onScroll={handleScroll}
+            stickyHeaderIndices={[0]}
         >
-            <View style={styles.titleBoxWrapper}>
-                <LinearGradient colors={[gradientColors.imgTop, gradientColors.imgBottom]} style={[styles.imgGradient, { opacity: imgGradientOpacity }]} />
-                <Text style={styles.artistTitle}>{data?.name}</Text>
-            </View>
-            <View style={styles.contentWrapper}>
-                <LinearGradient colors={[gradientColors.contentTop, "transparent"]} style={styles.contentTopGradient} />
+            <ArtistScreenStickyContent 
+                playIconStyle={playIconStyle} 
+                img={data?.images?.[0]?.url} 
+                title={data?.name} 
+                headerStyles={headerStyles} 
+                onPlayBtnClick={handlePlayBtnPress}
+            />
 
-                {Array(10).fill(null).map((a, i) => {
-                    return (
-                        <View key={i} style={{ height: 100, marginVertical: 200, backgroundColor: "#fff" }} />
-                    )
-                })}
+            <View style={styles.content}>
+                <View style={styles.titleBoxWrapper}>
+                    <LinearGradient colors={[gradientColors.imgTop, gradientColors.imgBottom]} style={[styles.imgGradient, { opacity: imgGradientOpacity }]} />
+                    <Text style={styles.artistTitle}>{data?.name}</Text>
+                </View>
+                <View style={styles.contentWrapper}>
+                    <LinearGradient colors={[gradientColors.contentTop, gradientColor(0.15, 0)]} style={styles.contentTopGradient} />
+
+                    {Array(10).fill(null).map((a, i) => {
+                        return (
+                            <View key={i} style={{ height: 100, marginVertical: 200, backgroundColor: "#fff" }} />
+                        )
+                    })}
+                </View>
             </View>
         </ScreenWrapper>
     )
 }
 
-type ArtistScreenFixedContentProps = {
+type ArtistScreenStickyContentProps = {
     img?: string;
     title?: string;
     headerStyles: SimpleHeaderProps["styles"];
+    playIconStyle: StyleProp<ViewStyle>;
     onPlayBtnClick: () => void;
 }
 
-const ArtistScreenFixedContent = (props: ArtistScreenFixedContentProps) => {
+const ArtistScreenStickyContent = (props: ArtistScreenStickyContentProps) => {
     return (
-        <>
+        <View style={styles.stickyContent}>
             <View style={styles.fixedImgWrapper}>
                 <ImageBackground source={{ uri: props.img }} style={styles.artistImg} />
                 <View style={styles.artistImgOverlay} />
             </View>
             <SimpleHeader title={props.title} styles={props.headerStyles} />
-            <Pressable style={styles.playIconWrapper} onPress={props.onPlayBtnClick}>
-                <PlayIcon style={styles.playIcon} fill={uiBase.colors.appBg(1)} />
+            <Pressable style={[styles.playIconWrapper, props.playIconStyle]} onPress={props.onPlayBtnClick}>
+                <PlayIcon style={[styles.playIcon]} fill={uiBase.colors.appBg(1)} />
             </Pressable>
-        </>
+        </View>
     )
 }

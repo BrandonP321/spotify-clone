@@ -13,6 +13,7 @@ const playIconWidth = 20;
 const playIconHeight = playIconWidth;
 const playIconWrapperPadding = 30;
 const playIconWrapperHeight = playIconWrapperPadding + playIconHeight;
+export const playIconPositionTop = artistImgWrapperHeight + 30;
 
 export default StyleSheet.create({
     artistScreen: {
@@ -20,10 +21,10 @@ export default StyleSheet.create({
     },
     fixedImgWrapper: {
         height: artistImgWrapperHeight,
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
+        // position: "absolute",
+        // top: 0,
+        // left: 0,
+        // right: 0,
         overflow: "hidden"
     },
     artistImg: {
@@ -77,7 +78,7 @@ export default StyleSheet.create({
         backgroundColor: uiBase.colors.lime(1),
         position: "absolute",
         right: uiBase.padding.appHorizontalPadding,
-        top: artistImgWrapperHeight + 30,
+        top: playIconPositionTop,
         zIndex: 1100
     },
     // icon wrapper's position when fixed to the header
@@ -87,5 +88,15 @@ export default StyleSheet.create({
     playIcon: {
         height: playIconHeight,
         width: playIconWidth,
+    },
+    stickyContent: {
+        // position: "absolute",
+        // top: 0,
+        // left: 0,
+        // right: 0,
+        height: 0
+    },
+    content: {
+        zIndex: 10
     }
 })

@@ -11,14 +11,15 @@ type AuthLoadingScreenProps = ScreenProps<"AuthLoading">;
 export default function AuthLoadingScreen(props: AuthLoadingScreenProps) {
     useEffect(() => {
         // TODO: remove this code when done testing auth flow
-        deleteItemAsync("accessToken").then(() => deleteItemAsync("refreshToken").then(() => {
+        // deleteItemAsync("accessToken").then(() => deleteItemAsync("refreshToken").then(() => {
             AuthUtils.validateUserAuth().then(res => {
                 // navigate to home page
+                console.log("navigate to home")
                 props.navigation.navigate("Home", {});
             }).catch(err => {
                 console.log("err", err);
             })
-        }))
+        // }))
     }, [])
 
     return (
