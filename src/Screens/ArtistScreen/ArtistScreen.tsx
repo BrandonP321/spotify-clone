@@ -6,7 +6,7 @@ import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
 import { ScreenProps } from '../../global/Navigation/Screens'
 import SimpleHeader, { SimpleHeaderProps } from '../../global/UI/Components/SimpleHeader/SimpleHeader';
 import { SpotifyArtist, SpotifyFetcher } from '../../utils';
-import styles, { artistImgWrapperHeight, playIconPositionTop } from "./ArtistScreen.style";
+import styles, { artistImgWrapperHeight, playIconPositionTop, scrollOffsetPlayIconFix } from "./ArtistScreen.style";
 import PlayIcon from "../../../assets/play-solid.svg";
 import { uiBase } from '../../global/UI/styles/uiBase.style';
 
@@ -23,7 +23,7 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     const [gradientColors, setGradientColors] = useState({ imgTop: gradientColor(0.15), imgBottom: gradientColor(0.15, 0), contentTop: gradientColor(0.15, 1) });
     const [headerColors, setHeaderColors] = useState({ headerBg: gradientColor(0.25, 0), backArrowBg: backArrowColor(0.3), title: headerTitleColor(0) })
     const [imgGradientOpacity, setImgGradientOpacity] = useState(0);
-    const [playBtnPosition, setPlayBtnPosition] = useState(playIconPositionTop)
+    const [isPlayBtnFixed, setIsPlayBtnFixed] = useState(false);
 
     useFocusEffect(useCallback(() => {
         SpotifyFetcher.getArtist(artistId)
@@ -65,7 +65,7 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     }
 
     const updatePlayIconPosition = (scrollOffset: number) => {
-        setPlayBtnPosition(playIconPositionTop - scrollOffset);
+        setIsPlayBtnFixed(scrollOffset >= scrollOffsetPlayIconFix);
     }
 
     const handlePlayBtnPress = () => {
@@ -78,62 +78,60 @@ export default function ArtistScreen(props: ArtistScreenProps) {
         title: { color: headerColors.title }
     }
 
-    const playIconStyle: StyleProp<ViewStyle> = {
-        top: playBtnPosition,
-    }
+    const PlayBtn = () => (
+        <PlayIconBtn onPress={handlePlayBtnPress} isFixed={isPlayBtnFixed}/>
+    )
 
     return (
-        <ScreenWrapper
-            style={styles.artistScreen}
-            onScroll={handleScroll}
-            stickyHeaderIndices={[0]}
-        >
-            <ArtistScreenStickyContent 
-                playIconStyle={playIconStyle} 
-                img={data?.images?.[0]?.url} 
-                title={data?.name} 
-                headerStyles={headerStyles} 
-                onPlayBtnClick={handlePlayBtnPress}
-            />
+        <>
+            {isPlayBtnFixed &&
+                <PlayBtn/>
+            }
 
-            <View style={styles.content}>
-                <View style={styles.titleBoxWrapper}>
-                    <LinearGradient colors={[gradientColors.imgTop, gradientColors.imgBottom]} style={[styles.imgGradient, { opacity: imgGradientOpacity }]} />
-                    <Text style={styles.artistTitle}>{data?.name}</Text>
+            <ScreenWrapper
+                style={styles.artistScreen}
+                onScroll={handleScroll}
+                stickyHeaderIndices={[0]}
+            >
+                <View style={styles.headerWrapper}>
+                    <SimpleHeader title={data?.name} styles={headerStyles} />
                 </View>
-                <View style={styles.contentWrapper}>
-                    <LinearGradient colors={[gradientColors.contentTop, gradientColor(0.15, 0)]} style={styles.contentTopGradient} />
 
-                    {Array(10).fill(null).map((a, i) => {
-                        return (
-                            <View key={i} style={{ height: 100, marginVertical: 200, backgroundColor: "#fff" }} />
-                        )
-                    })}
+                <View style={styles.fixedImgWrapper}>
+                    <ImageBackground source={{ uri: data?.images?.[0]?.url }} style={styles.artistImg} />
+                    <View style={styles.artistImgOverlay} />
                 </View>
-            </View>
-        </ScreenWrapper>
+
+                {!isPlayBtnFixed &&
+                    <PlayBtn/>
+                }
+
+                <View style={styles.content}>
+                    <View style={styles.titleBoxOuterWrapper}>
+                        <View style={styles.titleBoxContent}>
+                            <LinearGradient colors={[gradientColors.imgTop, gradientColors.imgBottom]} style={[styles.imgGradient, { opacity: imgGradientOpacity }]} />
+                            <Text style={styles.artistTitle}>{data?.name}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.contentWrapper}>
+                        <LinearGradient colors={[gradientColors.contentTop, gradientColor(0.15, 0)]} style={styles.contentTopGradient} />
+
+                        {Array(10).fill(null).map((a, i) => {
+                            return (
+                                <View key={i} style={{ height: 100, marginVertical: 200, backgroundColor: "#fff" }} />
+                            )
+                        })}
+                    </View>
+                </View>
+            </ScreenWrapper>
+        </>
     )
 }
 
-type ArtistScreenStickyContentProps = {
-    img?: string;
-    title?: string;
-    headerStyles: SimpleHeaderProps["styles"];
-    playIconStyle: StyleProp<ViewStyle>;
-    onPlayBtnClick: () => void;
-}
-
-const ArtistScreenStickyContent = (props: ArtistScreenStickyContentProps) => {
+const PlayIconBtn = (props: { onPress?: () => void, isFixed?: boolean }) => {
     return (
-        <View style={styles.stickyContent}>
-            <View style={styles.fixedImgWrapper}>
-                <ImageBackground source={{ uri: props.img }} style={styles.artistImg} />
-                <View style={styles.artistImgOverlay} />
-            </View>
-            <SimpleHeader title={props.title} styles={props.headerStyles} />
-            <Pressable style={[styles.playIconWrapper, props.playIconStyle]} onPress={props.onPlayBtnClick}>
-                <PlayIcon style={[styles.playIcon]} fill={uiBase.colors.appBg(1)} />
-            </Pressable>
-        </View>
+        <Pressable style={[styles.playIconWrapper, props.isFixed && styles.fixedIconWrapper]} onPress={props.onPress}>
+            <PlayIcon style={[styles.playIcon]} fill={uiBase.colors.appBg(1)} />
+        </Pressable>
     )
 }

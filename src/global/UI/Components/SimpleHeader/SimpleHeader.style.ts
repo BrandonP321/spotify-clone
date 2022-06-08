@@ -10,17 +10,12 @@ const backArrowHeight = backArrowWidth;
 
 export default StyleSheet.create({
     header: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
         height: uiBase.heights.headerHeight,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: uiBase.padding.appHorizontalPadding,
         paddingBottom: headerVerticalPadding,
         paddingTop: headerVerticalPadding + ScreenUtils.statusBarHeight,
-        zIndex: 1000,
     },
     backArrowWrapper: {
         marginRight: 25,

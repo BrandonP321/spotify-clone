@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { uiBase } from "../../global/UI/styles/uiBase.style";
 import { ScreenUtils } from "../../utils/ScreenUtils";
 
@@ -7,68 +7,23 @@ const { vw } = ScreenUtils;
 const artistImgHeight = vw;
 export const artistImgWrapperHeight = 290;
 const titleFontSize = 50;
-const titleMarginBottom = 5;
 
 const playIconWidth = 20;
 const playIconHeight = playIconWidth;
 const playIconWrapperPadding = 30;
 const playIconWrapperHeight = playIconWrapperPadding + playIconHeight;
-export const playIconPositionTop = artistImgWrapperHeight + 30;
 
-export default StyleSheet.create({
-    artistScreen: {
-        paddingTop: 0
-    },
-    fixedImgWrapper: {
-        height: artistImgWrapperHeight,
-        // position: "absolute",
-        // top: 0,
-        // left: 0,
-        // right: 0,
-        overflow: "hidden"
-    },
-    artistImg: {
-        width: vw,
-        height: artistImgHeight,
-    },
-    artistImgOverlay: {
-        backgroundColor: uiBase.colors.appBg(0.5),
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        height: artistImgWrapperHeight
-    },
-    imgGradient: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-    },
-    titleBoxWrapper: {
-        height: artistImgWrapperHeight,
-        justifyContent: "flex-end",
-        paddingBottom: 0,
-        paddingHorizontal: uiBase.padding.appHorizontalPadding
-    },
-    artistTitle: {
-        marginBottom: 0,
-        fontSize: titleFontSize,
-        color: uiBase.colors.textPrimary,
-        fontWeight: "900",
-        lineHeight: titleFontSize
-    },
-    contentWrapper: {
-        backgroundColor: uiBase.colors.appBg(1)
-    },
-    contentTopGradient: {
-        height: 100,
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0
-    },
+export const playIconPositionTop = artistImgWrapperHeight + 30;
+export const scrollOffsetPlayIconFix = playIconPositionTop - uiBase.heights.headerHeight + (playIconWrapperHeight / 2);
+
+const topAbsolutePosition: StyleProp<ViewStyle> = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0
+}
+
+const playIconStyles = StyleSheet.create({
     playIconWrapper: {
         justifyContent: "center",
         alignItems: "center",
@@ -89,14 +44,62 @@ export default StyleSheet.create({
         height: playIconHeight,
         width: playIconWidth,
     },
-    stickyContent: {
-        // position: "absolute",
-        // top: 0,
-        // left: 0,
-        // right: 0,
-        height: 0
+})
+
+export default StyleSheet.create({
+    artistScreen: {
+        paddingTop: 0
     },
+    fixedImgWrapper: {
+        height: artistImgWrapperHeight
+    },
+    artistImg: {
+        width: vw,
+        height: artistImgHeight,
+    },
+    artistImgOverlay: {
+        ...topAbsolutePosition,
+        backgroundColor: uiBase.colors.appBg(0.5),
+        height: artistImgWrapperHeight
+    },
+    imgGradient: {
+        ...topAbsolutePosition,
+        bottom: 0,
+    },
+    titleBoxOuterWrapper: {
+        height: 0,
+        overflow: "visible",
+        backgroundColor: "red",
+    },
+    titleBoxContent: {
+        height: artistImgWrapperHeight,
+        justifyContent: "flex-end",
+        paddingHorizontal: uiBase.padding.appHorizontalPadding,
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        left: 0
+    },
+    artistTitle: {
+        marginBottom: 0,
+        fontSize: titleFontSize,
+        color: uiBase.colors.textPrimary,
+        fontWeight: "900",
+        lineHeight: titleFontSize
+    },
+    contentWrapper: {
+        backgroundColor: uiBase.colors.appBg(1)
+    },
+    contentTopGradient: {
+        height: 100,
+        ...topAbsolutePosition,
+    },
+    ...playIconStyles,
     content: {
-        zIndex: 10
+        zIndex: 9
+    },
+    headerWrapper: {
+        height: 0.5,
+        overflow: "visible",
     }
 })

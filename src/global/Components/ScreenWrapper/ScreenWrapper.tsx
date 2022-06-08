@@ -1,5 +1,5 @@
-import React from 'react';
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewStyle } from 'react-native';
+import React, { Component } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewBase, ViewStyle } from 'react-native';
 import styles from "./ScreenWrapper.style";
 
 type ScreenWrapperProps = {
@@ -12,7 +12,14 @@ type ScreenWrapperProps = {
 export default function ScreenWrapper(props: ScreenWrapperProps) {
     return (
         <View>
-            <ScrollView stickyHeaderIndices={props.stickyHeaderIndices} contentContainerStyle={[styles.pageWrapper, props.style]} bounces={false} overScrollMode={"never"} onScroll={props.onScroll} scrollEventThrottle={90}>
+            <ScrollView 
+                stickyHeaderIndices={props.stickyHeaderIndices} 
+                contentContainerStyle={[styles.pageWrapper, props.style]} 
+                bounces={false} 
+                overScrollMode={"never"} 
+                onScroll={props.onScroll} 
+                scrollEventThrottle={90}
+            >
                 {props.children}
             </ScrollView>
         </View>
