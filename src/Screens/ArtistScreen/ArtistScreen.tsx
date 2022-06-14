@@ -1,14 +1,18 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useState } from 'react'
-import { Image, ImageBackground, NativeScrollEvent, NativeSyntheticEvent, Pressable, StyleProp, Text, View, ViewStyle } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, ScrollViewComponent, View } from 'react-native'
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
 import { ScreenProps } from '../../global/Navigation/Screens'
 import SimpleHeader, { SimpleHeaderProps } from '../../global/UI/Components/SimpleHeader/SimpleHeader';
-import { SpotifyArtist, SpotifyFetcher } from '../../utils';
-import styles, { artistImgWrapperHeight, playIconPositionTop, scrollOffsetPlayIconFix } from "./ArtistScreen.style";
+import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher, SpotifyTrack } from '../../utils';
+import styles, { artistImgWrapperHeight, scrollOffsetPlayIconFix } from "./ArtistScreen.style";
 import PlayIcon from "../../../assets/play-solid.svg";
 import { uiBase } from '../../global/UI/styles/uiBase.style';
+import { renderAlbumListItems, renderSongListItems } from '../../global/UI/Components/SongListItem/ImageListItem';
+import {AppText, AppHeading} from '../../global/UI/Components/AppText/AppText';
+import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScrollWrapper/HorizontalScrollWrapper';
+import { ArtistActionCard } from '../../global/UI/Components/ActionCard/ActionCard';
 
 type ArtistScreenProps = ScreenProps<"Artist">;
 
@@ -20,19 +24,35 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     const { artistId } = props.route.params;
 
     const [data, setData] = useState<SpotifyArtist | null>(null);
+    const [topTracks, setTopTracks] = useState<SpotifyTrack[] | null>(null);
+    const [albums, setAlbums] = useState<SpotifyAlbum[] | null>(null);
+    const [relatedArtists, setRelatedArtists] = useState<SpotifyArtist[] | null>(null);
     const [gradientColors, setGradientColors] = useState({ imgTop: gradientColor(0.15), imgBottom: gradientColor(0.15, 0), contentTop: gradientColor(0.15, 1) });
     const [headerColors, setHeaderColors] = useState({ headerBg: gradientColor(0.25, 0), backArrowBg: backArrowColor(0.3), title: headerTitleColor(0) })
     const [imgGradientOpacity, setImgGradientOpacity] = useState(0);
     const [isPlayBtnFixed, setIsPlayBtnFixed] = useState(false);
 
+    const scrollViewRef = useRef<ScrollView | null>(null);
+
     useFocusEffect(useCallback(() => {
-        SpotifyFetcher.getArtist(artistId)
-            .then(res => {
-                setData(res);
-            }).catch(err => {
-                console.log(err);
-            })
+        // ensure all data states are set to null on screen load
+        setData(null);
+        setTopTracks(null);
+        setAlbums(null);
+        setRelatedArtists(null);
+
+        SpotifyFetcher.getArtist(artistId).then(setData);
+        SpotifyFetcher.getArtistTopTracks(artistId).then(res => setTopTracks(res?.tracks?.slice(0, 5)));
+        SpotifyFetcher.getArtistAlbums(artistId).then(res => setAlbums(res.items));
+        SpotifyFetcher.getArtistRelatedArtists(artistId).then(res => setRelatedArtists(res.artists?.slice(0, 10)));
     }, [artistId]));
+
+    useEffect(() => {
+        if (data === null) {
+            // whenever data is reset, scroll to top of screen
+            scrollViewRef.current?.scrollTo(0)
+        }
+    }, [data])
 
     const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const scrollOffset = event.nativeEvent.contentOffset.y;
@@ -92,6 +112,7 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                 style={styles.artistScreen}
                 onScroll={handleScroll}
                 stickyHeaderIndices={[0]}
+                loading={!data ?? !albums ?? !topTracks ?? !relatedArtists}
             >
                 <View style={styles.headerWrapper}>
                     <SimpleHeader title={data?.name} styles={headerStyles} />
@@ -110,17 +131,26 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                     <View style={styles.titleBoxOuterWrapper}>
                         <View style={styles.titleBoxContent}>
                             <LinearGradient colors={[gradientColors.imgTop, gradientColors.imgBottom]} style={[styles.imgGradient, { opacity: imgGradientOpacity }]} />
-                            <Text style={styles.artistTitle}>{data?.name}</Text>
+                            <AppText style={styles.artistTitle}>{data?.name}</AppText>
                         </View>
                     </View>
                     <View style={styles.contentWrapper}>
                         <LinearGradient colors={[gradientColors.contentTop, gradientColor(0.15, 0)]} style={styles.contentTopGradient} />
 
-                        {Array(10).fill(null).map((a, i) => {
-                            return (
-                                <View key={i} style={{ height: 100, marginVertical: 200, backgroundColor: "#fff" }} />
-                            )
-                        })}
+                        <AppHeading style={styles.heading}>Popular</AppHeading>
+                        {renderSongListItems(topTracks)}
+
+                        <AppHeading style={[[styles.heading, { marginBottom: 10 }]]}>Related Artists</AppHeading>
+                        <HorizontalScrollWrapper>
+                            {relatedArtists?.map((a, i) => {
+                                return (
+                                    <ArtistActionCard key={i} artistData={a} withoutRightMargin={i === relatedArtists.length - 1}/>
+                                )
+                            })}
+                        </HorizontalScrollWrapper>
+
+                        <AppHeading style={[styles.heading, { marginTop: 30 }]}>Popular Releases</AppHeading>
+                        {renderAlbumListItems(albums, true)}
                     </View>
                 </View>
             </ScreenWrapper>

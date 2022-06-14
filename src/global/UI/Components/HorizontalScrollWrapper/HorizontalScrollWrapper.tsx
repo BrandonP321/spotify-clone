@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { AppHeading } from '../AppText/AppText';
 import styles from "./HorizontalScrollWrapper.style";
 
 type HorizontalScrollWrapperProps = {
@@ -16,7 +17,7 @@ export default function HorizontalScrollWrapper(props: HorizontalScrollWrapperPr
     return (
         <View style={styles.wrapper}>
             {heading &&
-                <Text style={styles.heading}>{heading}</Text>
+                <AppHeading style={styles.heading}>{heading}</AppHeading>
             }
             <ScrollView
                 style={{ overflow: "visible" }}

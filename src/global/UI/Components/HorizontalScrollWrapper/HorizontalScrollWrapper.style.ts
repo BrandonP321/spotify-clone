@@ -10,8 +10,8 @@ export default StyleSheet.create({
 
     },
     heading: {
-        fontSize: 28,
-        fontWeight: "700",
+        fontSize: 25,
+        fontFamily: uiBase.fontFamilies.primary.bold,
         color: uiBase.colors.textPrimary,
         marginBottom: 20,
     }

@@ -4,6 +4,7 @@ import { Image, ImageStyle, Pressable, Text, TextStyle, View, ViewStyle } from '
 import { SpotifyArtist } from '../../../../utils';
 import { NavigationHelper, useAppNavigation } from '../../../../utils/NavigationHelper';
 import { RootStackParamList } from '../../../Navigation/Screens';
+import { AppHeading, AppText } from '../AppText/AppText';
 import styles from "./ActionCard.style";
 
 type ActionCardProps = {
@@ -42,10 +43,10 @@ export default function ActionCard(props: ActionCardProps) {
         >
             <Image source={{ uri: img }} style={[styles.img, customStyles?.img]}/>
             {title &&
-                <Text style={[styles.title, customStyles?.title]} numberOfLines={1}>{title}</Text>
+                <AppHeading style={[styles.title, customStyles?.title]} numberOfLines={1}>{title}</AppHeading>
             }
             {blurb &&
-                <Text style={[styles.blurb, customStyles?.blurb]} numberOfLines={2}>{blurb}</Text>
+                <AppText style={[styles.blurb, customStyles?.blurb]} numberOfLines={2}>{blurb}</AppText>
             }
         </Pressable>
     )

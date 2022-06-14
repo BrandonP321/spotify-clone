@@ -15,7 +15,15 @@ type SpotifyImg = {
     url: string;
 }
 
-export type SpotifyArtist = {
+export type BasicSpotifyResponseProps = {
+    href: string | null;
+    id: string;
+    images: SpotifyImg[];
+    name: string;
+    uri: string;
+}
+
+export type SpotifyArtist = BasicSpotifyResponseProps & {
     external_urls: {
         spotify?: string;
     };
@@ -24,12 +32,30 @@ export type SpotifyArtist = {
         total: number;
     };
     genres: string[];
-    href: string | null;
-    id: string;
-    images: SpotifyImg[];
-    name: string;
     type: "artist";
-    uri: string;
+}
+
+export type SpotifyAlbum = BasicSpotifyResponseProps & {
+    album_type: string;
+    total_tracks: number;
+    release_date: string;
+    type: "album";
+    album_group: string;
+    artists: Omit<SpotifyArtist, "followers">[];
+}
+
+export type SpotifyTrack = BasicSpotifyResponseProps & {
+    album: SpotifyAlbum;
+    artists: SpotifyArtist[];
+    disc_number: number;
+    duration_ms: number;
+    explicit: boolean;
+    external_urls: { [key: string]: string };
+    is_playable: boolean;
+    popularity: number;
+    preview_url: string;
+    track_number: number;
+    type: string;
 }
 
 export class SpotifyFetcher {
@@ -51,6 +77,42 @@ export class SpotifyFetcher {
         return new Promise<SpotifyArtist>(async (resolve, reject) => {
             try {
                 const res = await APIFetcher.get<SpotifyArtist>(`${APIFetcher.SpotifyAPIDomain}/artists/${artistId}`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getArtistTopTracks = async (artistId: string) => {
+        return new Promise<{ tracks: SpotifyTrack[] }>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<{ tracks: SpotifyTrack[] }>(`${APIFetcher.SpotifyAPIDomain}/artists/${artistId}/top-tracks?market=us`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getArtistRelatedArtists = async (artistId: string) => {
+        return new Promise<{ artists: SpotifyArtist[] }>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<{ artists: SpotifyArtist[] }>(`${APIFetcher.SpotifyAPIDomain}/artists/${artistId}/related-artists`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getArtistAlbums = async (artistId: string) => {
+        return new Promise<SpotifyItemsResponse<SpotifyAlbum>>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyItemsResponse<SpotifyAlbum>>(`${APIFetcher.SpotifyAPIDomain}/artists/${artistId}/albums?limit=5`);
 
                 resolve(res);
             } catch (err) {

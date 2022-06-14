@@ -6,7 +6,7 @@ const { vw } = ScreenUtils;
 
 const artistImgHeight = vw;
 export const artistImgWrapperHeight = 290;
-const titleFontSize = 50;
+const titleFontSize = 45;
 
 const playIconWidth = 20;
 const playIconHeight = playIconWidth;
@@ -83,12 +83,13 @@ export default StyleSheet.create({
     artistTitle: {
         marginBottom: 0,
         fontSize: titleFontSize,
+        fontFamily: uiBase.fontFamilies.primary.bold,
         color: uiBase.colors.textPrimary,
-        fontWeight: "900",
-        lineHeight: titleFontSize
+        lineHeight: titleFontSize + 5
     },
     contentWrapper: {
-        backgroundColor: uiBase.colors.appBg(1)
+        backgroundColor: uiBase.colors.appBg(1),
+        paddingTop: 10
     },
     contentTopGradient: {
         height: 100,
@@ -101,5 +102,15 @@ export default StyleSheet.create({
     headerWrapper: {
         height: 0.5,
         overflow: "visible",
+    },
+    heading: {
+        marginTop: 50,
+        marginLeft: uiBase.padding.appHorizontalPadding,
+    },
+    albumListItem: {
+
+    },
+    ablumListItemImg: {
+        
     }
 })
