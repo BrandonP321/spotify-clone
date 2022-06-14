@@ -1,6 +1,7 @@
 import { DeviceUtils } from "../../../utils/DeviceUtils";
 import { ScreenUtils } from "../../../utils/ScreenUtils";
 import { colors } from "./colors.style";
+import { fonts } from "./font.style";
 
 const { vw } = ScreenUtils
 
@@ -13,12 +14,13 @@ const globalEleHeights = {
 
 const defaultPadding = {
     appTopPadding: 65,
-    appBottomPadding: globalEleHeights.floatingMusicPlayerHeight + globalEleHeights.tabBarHeight,
+    appBottomPadding: globalEleHeights.floatingMusicPlayerHeight + globalEleHeights.tabBarHeight + 15,
     appHorizontalPadding: 15,
 }
 
 export const uiBase = {
     colors: colors,
     padding: defaultPadding,
-    heights: globalEleHeights
+    heights: globalEleHeights,
+    ...fonts
 }
