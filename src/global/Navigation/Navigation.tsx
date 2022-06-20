@@ -10,6 +10,8 @@ import { ScreenUtils } from '../../utils/ScreenUtils';
 import AuthLoadingScreen from '../../Screens/AuthLoadingScreen/AuthLoadingScreen';
 import { navigationRef } from '../../utils/NavigationHelper';
 import ArtistScreen from '../../Screens/ArtistScreen/ArtistScreen';
+import AlbumScreen from '../../Screens/AlbumScreen/AlbumScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export default function Navigation() {
 
@@ -19,10 +21,6 @@ export default function Navigation() {
       <TabNavigator />
     </NavigationContainer>
   )
-}
-
-type TabNavigatorProps = {
-
 }
 
 const styles = StyleSheet.create({
@@ -55,7 +53,7 @@ const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
 
   return (
-    <Tab.Navigator initialRouteName={"AuthLoading"} sceneContainerStyle={{ backgroundColor: "rgba(0, 0, 0, 0)" }} screenOptions={({ route }) => ({
+    <Tab.Navigator initialRouteName={"Home"} sceneContainerStyle={{ backgroundColor: "rgba(0, 0, 0, 0)" }} backBehavior={"history"} screenOptions={({ route }) => ({
       header: () => null,
       tabBarStyle: styles.tabBar,
       tabBarIconStyle: styles.tabIcon,
@@ -65,11 +63,12 @@ const TabNavigator = () => {
           colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .7)", "rgba(0, 0, 0, 1)"]}
           locations={[0, 0.5, .9]}
         />
-      )
+      ),
     })}>
-      <Tab.Screen name={"AuthLoading"} component={AuthLoadingScreen} options={{ tabBarButton: () => null }}/>
       <Tab.Screen name={"Home"} component={HomeScreen} options={{}}/>
       <Tab.Screen name={"Artist"} component={ArtistScreen} options={{ tabBarButton: () => null }}/>
+      <Tab.Screen name={"Album"} component={AlbumScreen} options={{ tabBarButton: () => null }}/>
+
     </Tab.Navigator>
   )
-}
+};
