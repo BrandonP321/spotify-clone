@@ -31,7 +31,9 @@ export default StyleSheet.create({
         height: 23,
     },
     title: {
-        fontWeight: "700",
-        color: uiBase.colors.textPrimary
+        fontFamily: uiBase.fontFamilies.primary.semiBold,
+        color: uiBase.colors.textPrimary,
+        fontSize: 13,
+        width: vw - (uiBase.padding.appHorizontalPadding * 2) - backArrowWidth - 30
     }
 })

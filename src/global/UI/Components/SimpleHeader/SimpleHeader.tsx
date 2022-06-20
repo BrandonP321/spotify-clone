@@ -40,7 +40,7 @@ export default function SimpleHeader(props: SimpleHeaderProps) {
             <Pressable style={[styles.backArrowWrapper, customStyles?.backArrow]} onPress={handleBackArrowPress}>
                 <BackArrow fill={uiBase.colors.textPrimary} style={styles.backArrow}/>
             </Pressable>
-            <Animated.Text style={[styles.title, customStyles?.title, animTitleStyle]}>{title}</Animated.Text>
+            <Animated.Text style={[styles.title, customStyles?.title, animTitleStyle]} numberOfLines={1} >{title}</Animated.Text>
         </Animated.View>
     )
 }
