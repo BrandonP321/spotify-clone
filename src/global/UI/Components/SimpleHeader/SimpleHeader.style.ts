@@ -13,7 +13,8 @@ export default StyleSheet.create({
         height: uiBase.heights.headerHeight,
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: uiBase.padding.appHorizontalPadding,
+        paddingRight: uiBase.padding.appHorizontalPadding,
+        paddingLeft: uiBase.padding.appHorizontalPadding - 5,
         paddingBottom: headerVerticalPadding,
         paddingTop: headerVerticalPadding + ScreenUtils.statusBarHeight,
     },
@@ -22,14 +23,12 @@ export default StyleSheet.create({
         width: backArrowWidth,
         height: backArrowHeight,
         borderRadius: backArrowWidth / 2,
-        backgroundColor: "rgba(0, 0, 0, 0.3)",
         justifyContent: "center",
         alignItems: "center",
     },
     backArrow: {
-        color: uiBase.colors.textPrimary,
-        fontWeight: "700",
-        fontSize: 20
+        width: backArrowWidth,
+        height: 23,
     },
     title: {
         fontWeight: "700",

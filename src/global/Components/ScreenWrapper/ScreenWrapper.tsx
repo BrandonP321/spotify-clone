@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewBase, ViewStyle } from 'react-native';
+import Animated from 'react-native-reanimated';
 import LoadingSpinnerContainer from '../../UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
 import styles from "./ScreenWrapper.style";
 
@@ -13,20 +14,32 @@ type ScreenWrapperProps = {
 }
 
 export default function ScreenWrapper(props: ScreenWrapperProps) {
+    const [showLoading, setShowLoading] = useState(props.loading === undefined ? false : true);
+
+    useEffect(() => {
+        // if loading has finished, wait .25s to hide spinner so content can render
+        if (!props.loading) {
+            setTimeout(() => {
+                setShowLoading(false);
+            }, 250)
+        } else {
+            setShowLoading(true);
+        }
+    }, [props.loading])
+
     return (
         <View>
-            <LoadingSpinnerContainer loading={props.loading}/>
-            <ScrollView 
+            <LoadingSpinnerContainer loading={showLoading}/>
+            <Animated.ScrollView 
                 stickyHeaderIndices={props.stickyHeaderIndices} 
                 contentContainerStyle={[styles.pageWrapper, props.style]} 
                 bounces={false} 
                 overScrollMode={"never"} 
                 onScroll={props.onScroll} 
                 scrollEventThrottle={90}
-                ref={props.scrollViewRef}
             >
                 {props.children}
-            </ScrollView>
+            </Animated.ScrollView>
         </View>
     )
 }

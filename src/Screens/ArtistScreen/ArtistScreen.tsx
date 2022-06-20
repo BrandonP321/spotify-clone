@@ -1,24 +1,21 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, ScrollViewComponent, View } from 'react-native'
+import { ImageBackground, NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from 'react-native'
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
 import { ScreenProps } from '../../global/Navigation/Screens'
 import SimpleHeader, { SimpleHeaderProps } from '../../global/UI/Components/SimpleHeader/SimpleHeader';
 import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher, SpotifyTrack } from '../../utils';
-import styles, { artistImgWrapperHeight, scrollOffsetPlayIconFix } from "./ArtistScreen.style";
-import PlayIcon from "../../../assets/play-solid.svg";
-import { uiBase } from '../../global/UI/styles/uiBase.style';
-import { renderAlbumListItems, renderSongListItems } from '../../global/UI/Components/SongListItem/ImageListItem';
-import {AppText, AppHeading} from '../../global/UI/Components/AppText/AppText';
+import styles, { artistImgWrapperHeight, playIconPositionTop, scrollOffsetPlayIconFix } from "./ArtistScreen.style";
+import { AlbumListItem, SongListItem } from '../../global/UI/Components/SongListItem/ImageListItem';
+import { AppText, AppHeading } from '../../global/UI/Components/AppText/AppText';
 import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScrollWrapper/HorizontalScrollWrapper';
 import { ArtistActionCard } from '../../global/UI/Components/ActionCard/ActionCard';
+import { PlayIconBtn } from '../../global/UI/Components/PlayBtn/PlayIconBtn';
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import AnimatedGradient from '../../global/UI/Components/AnimatedGradient/AnimatedGradient';
 
 type ArtistScreenProps = ScreenProps<"Artist">;
-
-const gradientColor = (l: number, a?: number) => `hsla(0, 0%, ${l * 100}%, ${a ?? 1})`;
-const backArrowColor = (a: number) => `rgba(0, 0, 0, ${a})`;
-const headerTitleColor = (a: number) => `rgba(255, 255, 255, ${a})`
 
 export default function ArtistScreen(props: ArtistScreenProps) {
     const { artistId } = props.route.params;
@@ -27,25 +24,25 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     const [topTracks, setTopTracks] = useState<SpotifyTrack[] | null>(null);
     const [albums, setAlbums] = useState<SpotifyAlbum[] | null>(null);
     const [relatedArtists, setRelatedArtists] = useState<SpotifyArtist[] | null>(null);
-    const [gradientColors, setGradientColors] = useState({ imgTop: gradientColor(0.15), imgBottom: gradientColor(0.15, 0), contentTop: gradientColor(0.15, 1) });
-    const [headerColors, setHeaderColors] = useState({ headerBg: gradientColor(0.25, 0), backArrowBg: backArrowColor(0.3), title: headerTitleColor(0) })
-    const [imgGradientOpacity, setImgGradientOpacity] = useState(0);
-    const [isPlayBtnFixed, setIsPlayBtnFixed] = useState(false);
 
     const scrollViewRef = useRef<ScrollView | null>(null);
 
     useFocusEffect(useCallback(() => {
-        // ensure all data states are set to null on screen load
-        setData(null);
-        setTopTracks(null);
-        setAlbums(null);
-        setRelatedArtists(null);
-
         SpotifyFetcher.getArtist(artistId).then(setData);
         SpotifyFetcher.getArtistTopTracks(artistId).then(res => setTopTracks(res?.tracks?.slice(0, 5)));
         SpotifyFetcher.getArtistAlbums(artistId).then(res => setAlbums(res.items));
         SpotifyFetcher.getArtistRelatedArtists(artistId).then(res => setRelatedArtists(res.artists?.slice(0, 10)));
+
+        // ensure all data states are set to null on screen unload
+        return resetData;
     }, [artistId]));
+
+    const resetData = () => {
+        setData(null);
+        setTopTracks(null);
+        setAlbums(null);
+        setRelatedArtists(null);
+    }
 
     useEffect(() => {
         if (data === null) {
@@ -54,68 +51,39 @@ export default function ArtistScreen(props: ArtistScreenProps) {
         }
     }, [data])
 
-    const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        const scrollOffset = event.nativeEvent.contentOffset.y;
-
-        updateGradientColors(scrollOffset);
-        updateHeaderColors(scrollOffset);
-        updatePlayIconPosition(scrollOffset);
-    }, [])
-
-    const updateGradientColors = (scrollOffset: number) => {
-        const scrollPercentFromImgMid = scrollOffset / (artistImgWrapperHeight / 2);
-
-        const imgGradientOpacity = scrollPercentFromImgMid;
-        const imgBottomGradientColor = gradientColor(0.15, scrollPercentFromImgMid);
-
-        if (scrollPercentFromImgMid <= 1) {
-            setGradientColors({ imgTop: gradientColor(0.15), imgBottom: imgBottomGradientColor, contentTop: gradientColor(0.15, 1) });
-            setImgGradientOpacity(imgGradientOpacity);
-        }
-    }
-
-    const updateHeaderColors = (scrollOffset: number) => {
-        const scrollPercentFromImgMidToBottom = (1 - (scrollOffset / (artistImgWrapperHeight / 3))) * -1 * 5;
-
-        let headerBg = gradientColor(0.25, scrollPercentFromImgMidToBottom);
-        let backArrowBg = backArrowColor(Math.min(0.3, scrollPercentFromImgMidToBottom / -15 + 0.25));
-        let titleColor = headerTitleColor(scrollPercentFromImgMidToBottom / 3 - 1);
-
-        setHeaderColors({ headerBg, backArrowBg, title: titleColor })
-    }
-
-    const updatePlayIconPosition = (scrollOffset: number) => {
-        setIsPlayBtnFixed(scrollOffset >= scrollOffsetPlayIconFix);
-    }
-
     const handlePlayBtnPress = () => {
         alert("play artist music");
+
+        props.navigation.push("Album", { albumId: albums?.[0]?.id ?? "" })
     }
 
-    const headerStyles: SimpleHeaderProps["styles"] = {
-        backArrow: { backgroundColor: headerColors.backArrowBg },
-        header: { backgroundColor: headerColors.headerBg },
-        title: { color: headerColors.title }
-    }
+    const scrollOffset = useSharedValue(0);
 
-    const PlayBtn = () => (
-        <PlayIconBtn onPress={handlePlayBtnPress} isFixed={isPlayBtnFixed}/>
+    const PlayBtn = (props: { fixedIcon?: boolean; }) => (
+        <PlayIconBtn onPress={handlePlayBtnPress} style={styles.playBtn} scrollOffset={scrollOffset} isFixedInstance={props.fixedIcon} top={playIconPositionTop}/>
     )
+
+    const handleScroll = useAnimatedScrollHandler((e) => {
+        scrollOffset.value = e?.contentOffset.y;
+    })
 
     return (
         <>
-            {isPlayBtnFixed &&
-                <PlayBtn/>
-            }
+            <PlayBtn fixedIcon/>
 
             <ScreenWrapper
                 style={styles.artistScreen}
                 onScroll={handleScroll}
                 stickyHeaderIndices={[0]}
-                loading={!data ?? !albums ?? !topTracks ?? !relatedArtists}
+                loading={!!(!data ?? !albums ?? !topTracks ?? !relatedArtists)}
             >
                 <View style={styles.headerWrapper}>
-                    <SimpleHeader title={data?.name} styles={headerStyles} />
+                    <SimpleHeader 
+                        title={data?.name} 
+                        scrollOffset={scrollOffset}
+                        bgOpacityInterpolationInput={[artistImgWrapperHeight / 4, artistImgWrapperHeight / 2]}
+                        titleOpacityInterpolationInput={[artistImgWrapperHeight / 2 + 25, artistImgWrapperHeight]}
+                    />
                 </View>
 
                 <View style={styles.fixedImgWrapper}>
@@ -123,45 +91,85 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                     <View style={styles.artistImgOverlay} />
                 </View>
 
-                {!isPlayBtnFixed &&
-                    <PlayBtn/>
-                }
+                <PlayBtn />
 
                 <View style={styles.content}>
                     <View style={styles.titleBoxOuterWrapper}>
                         <View style={styles.titleBoxContent}>
-                            <LinearGradient colors={[gradientColors.imgTop, gradientColors.imgBottom]} style={[styles.imgGradient, { opacity: imgGradientOpacity }]} />
+                            <AnimatedGradient
+                                colors={["hsl(0, 0%, 20%)", "hsl(0, 0%, 15%)"]}
+                                opacityInterpolationInput={[0, artistImgWrapperHeight / 2]}
+                                scrollOffset={scrollOffset}
+                                style={{
+                                    container: {
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0
+                                    },
+                                    gradient: {
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0
+                                    }
+                                }}
+                            />
                             <AppText style={styles.artistTitle}>{data?.name}</AppText>
                         </View>
                     </View>
                     <View style={styles.contentWrapper}>
-                        <LinearGradient colors={[gradientColors.contentTop, gradientColor(0.15, 0)]} style={styles.contentTopGradient} />
+                        <LinearGradient
+                            colors={["hsl(0, 0%, 15%)", "hsla(0, 0%, 25%, 0)"]}
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: 200
+                            }}
+                        />
 
                         <AppHeading style={styles.heading}>Popular</AppHeading>
-                        {renderSongListItems(topTracks)}
+                        {topTracks?.map((track, i) => {
+                            return (
+                                <SongListItem
+                                    key={i}
+                                    title={track.name}
+                                    subtitle={track?.artists?.map(a => a?.name)?.join(", ")}
+                                    image={track.album?.images?.[0]?.url}
+                                    songId={track.id}
+                                    trackNumber={i + 1}
+                                />
+                            )
+                        })}
 
                         <AppHeading style={[[styles.heading, { marginBottom: 10 }]]}>Related Artists</AppHeading>
                         <HorizontalScrollWrapper>
                             {relatedArtists?.map((a, i) => {
                                 return (
-                                    <ArtistActionCard key={i} artistData={a} withoutRightMargin={i === relatedArtists.length - 1}/>
+                                    <ArtistActionCard key={i} artistData={a} withoutRightMargin={i === relatedArtists.length - 1} />
                                 )
                             })}
                         </HorizontalScrollWrapper>
 
                         <AppHeading style={[styles.heading, { marginTop: 30 }]}>Popular Releases</AppHeading>
-                        {renderAlbumListItems(albums, true)}
+                        {albums?.map((a, i) => {
+                            return (
+                                <AlbumListItem
+                                    key={i}
+                                    albumId={a.id}
+                                    title={a.name}
+                                    image={a.images?.[0]?.url}
+                                    subtitle={a.release_date?.split("-")?.[0]}
+                                />
+                            )
+                        })}
                     </View>
                 </View>
             </ScreenWrapper>
         </>
-    )
-}
-
-const PlayIconBtn = (props: { onPress?: () => void, isFixed?: boolean }) => {
-    return (
-        <Pressable style={[styles.playIconWrapper, props.isFixed && styles.fixedIconWrapper]} onPress={props.onPress}>
-            <PlayIcon style={[styles.playIcon]} fill={uiBase.colors.appBg(1)} />
-        </Pressable>
     )
 }
