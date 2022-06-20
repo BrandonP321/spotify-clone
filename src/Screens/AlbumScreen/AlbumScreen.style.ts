@@ -2,35 +2,7 @@ import { StyleSheet } from "react-native";
 import { uiBase } from "../../global/UI/styles/uiBase.style";
 import { ScreenUtils } from "../../utils/ScreenUtils";
 
-const albumImgPadding = 20;
-const albumImgWrapperHeight = 250;
-export const albumImgHeight = albumImgWrapperHeight - (albumImgPadding * 2);
-export const topContentHeight = albumImgWrapperHeight + ScreenUtils.statusBarHeight;
-
 export default StyleSheet.create({
-    albumScreen: {
-        paddingTop: 0,
-    },
-    headerWrapper: {
-        height: 0.5,
-        overflow: "visible",
-    },
-    topContentWrapper: {
-        height: topContentHeight,
-        paddingBottom: albumImgPadding,
-        justifyContent: "flex-end",
-    },
-    topContentGradient: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        height: topContentHeight + 100
-    },
-    albumImg: {
-        height: albumImgHeight,
-        resizeMode: "contain"
-    },
     contentWrapper: {
 
     },

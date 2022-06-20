@@ -4,7 +4,7 @@ import Animated from 'react-native-reanimated';
 import LoadingSpinnerContainer from '../../UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
 import styles from "./ScreenWrapper.style";
 
-type ScreenWrapperProps = {
+export type ScreenWrapperProps = {
     children: React.ReactNode[] | React.ReactNode;
     style?: StyleProp<ViewStyle>;
     onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
