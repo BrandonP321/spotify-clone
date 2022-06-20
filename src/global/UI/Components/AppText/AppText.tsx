@@ -19,22 +19,21 @@ const styles = StyleSheet.create({
     }
 })
 
-export const AppText = function (props: AppTextProps) {
+export const AppText = React.forwardRef<Text, AppTextProps>((props, ref) => {
     const { children, style, ...rest } = props;
 
     return (
-        <Text {...rest} style={[styles.text, style]}>{children}</Text>
+        <Text {...rest} ref={ref} style={[styles.text, style]}>{children}</Text>
     )
-}
+})
 
 export type AppHeadingProps = AppTextProps & {
-
 }
 
-export const AppHeading = function (props: AppHeadingProps) {
+export const AppHeading = React.forwardRef<Text, AppHeadingProps>((props: AppHeadingProps, ref) => {
     const { style, ...rest } = props;
 
     return (
-        <AppText {...rest} style={[styles.heading, style]}/>
+        <AppText {...rest} ref={ref} style={[styles.heading, style]}/>
     )
-}
+})

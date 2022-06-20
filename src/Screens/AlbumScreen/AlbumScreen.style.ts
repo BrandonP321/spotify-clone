@@ -6,8 +6,6 @@ const albumImgPadding = 20;
 const albumImgWrapperHeight = 250;
 export const albumImgHeight = albumImgWrapperHeight - (albumImgPadding * 2);
 export const topContentHeight = albumImgWrapperHeight + ScreenUtils.statusBarHeight;
-export const playIconPositionTop = topContentHeight + 50;
-// export const playIconFixedPoint = playIconPositionTop - playIconFixedTop
 
 export default StyleSheet.create({
     albumScreen: {

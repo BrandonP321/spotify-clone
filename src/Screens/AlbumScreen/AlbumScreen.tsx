@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useState } from "react"
-import { Image, ImageStyle, Pressable, StyleProp, View } from "react-native"
+import React, { useCallback, useEffect, useRef, useState } from "react"
+import { Image, ImageStyle, Pressable, StyleProp, Text, View } from "react-native"
 import Animated, { interpolate, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import ScreenWrapper from "../../global/Components/ScreenWrapper/ScreenWrapper";
 import { ScreenProps } from "../../global/Navigation/Screens"
@@ -14,7 +14,7 @@ import { ArtistListItem, SongListItem } from "../../global/UI/Components/SongLis
 import { uiBase } from "../../global/UI/styles/uiBase.style";
 import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher } from "../../utils";
 import { useAppNavigation } from "../../utils/NavigationHelper";
-import styles, { albumImgHeight, playIconPositionTop, topContentHeight } from "./AlbumScreen.style";
+import styles, { albumImgHeight, topContentHeight } from "./AlbumScreen.style";
 
 const gradientColor = (l: number, a?: number) => `hsla(0, 0%, ${l * 100}%, ${a ?? 1})`;
 
@@ -28,6 +28,8 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     const [data, setData] = useState<SpotifyAlbum | null>(null);
     const [otherAlbums, setOtherAlbums] = useState<SpotifyAlbum[] | null>(null);
     const [allArtists, setAllArtists] = useState<SpotifyArtist[] | null>(null);
+    const [albumTitleHeight, setAlbumTitleHeight] = useState(0);
+    const albumTitleEle = React.createRef<Text>();
 
     useFocusEffect(useCallback(() => {
         SpotifyFetcher.getAlbum(albumId).then(album => {
@@ -49,6 +51,13 @@ const AlbumScreen = (props: AlbumScreenProps) => {
         }
     }, [albumId]));
 
+    useEffect(() => {
+        /* After content loads, get height of album title text */
+        albumTitleEle.current?.measure((x, y, w, h) => {
+            setAlbumTitleHeight(h);
+        });
+    }, [data])
+
     const scrollOffset = useSharedValue(0);
     
     const handleScroll = useAnimatedScrollHandler((e) => {
@@ -68,7 +77,13 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     }
 
     const PlayBtn = (props: { fixedIcon?: boolean; }) => (
-        <PlayIconBtn onPress={handlePlayBtnPress} style={styles.playBtn} scrollOffset={scrollOffset} isFixedInstance={props.fixedIcon} top={playIconPositionTop}/>
+        <PlayIconBtn 
+            onPress={handlePlayBtnPress} 
+            style={styles.playBtn} 
+            scrollOffset={scrollOffset} 
+            isFixedInstance={props.fixedIcon} 
+            top={topContentHeight + albumTitleHeight}
+        />
     )
 
     return (
@@ -105,7 +120,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
                 </View>
 
                 <View>
-                    <AppHeading style={styles.title}>{data?.name}</AppHeading>
+                    <AppHeading ref={albumTitleEle} style={styles.title}>{data?.name}</AppHeading>
                     <Pressable style={styles.artistWrapper} onPress={goToArtist}>
                         <Image source={{ uri: allArtists?.[0]?.images?.[0]?.url }} style={styles.artistImg}/>
                         <AppText style={styles.artistName}>{data?.artists?.[0]?.name}</AppText>
