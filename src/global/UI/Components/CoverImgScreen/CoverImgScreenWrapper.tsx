@@ -16,6 +16,11 @@ type CoverImgScreenWrapperProps = Omit<ScreenWrapperProps, "onScroll" | "stickyH
 
 const gradientColor = (l: number, a?: number) => `hsla(0, 0%, ${l * 100}%, ${a ?? 1})`;
 
+/**
+ * Extension of <ScreenWrapper> with predefined styles and an animating cover image
+ * @param props 
+ * @returns 
+ */
 export default function CoverImgScreenWrapper(props: CoverImgScreenWrapperProps) {
   const { children, coverImg, headerTitle, scrollOffset, ...rest } = props;
 
