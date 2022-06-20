@@ -1,20 +1,23 @@
 import React from 'react';
-import { Pressable, View, Text, Image, StyleProp, ViewStyle, TextProps, ImageProps, StyleSheet, ImageStyle, TextStyle } from 'react-native';
-import { SpotifyAlbum, SpotifyTrack } from '../../../../utils';
+import { Pressable, View, Image, StyleProp, ViewStyle, ImageStyle, TextStyle } from 'react-native';
+import { useAppNavigation } from '../../../../utils/NavigationHelper';
 import { AppText } from '../AppText/AppText';
 import styles from "./ImageListItem.style";
+import EllipsisIcon from "../../../../../assets/ellipsis-vertical.svg";
+import { uiBase } from '../../styles/uiBase.style';
 
 type ImageListItemProps = {
-    image: string;
+    image?: string;
     title: string;
-    subtitle: string;
+    subtitle?: string;
     onPress: () => void;
     onMoreBtnPress?: () => void;
     trackNumber?: number;
     styles?: {
         wrapper?: StyleProp<ViewStyle>;
-        trackNumber?: StyleProp<TextProps>;
+        trackNumber?: StyleProp<TextStyle>;
         img?: StyleProp<ImageStyle>;
+        textWrapper?: StyleProp<ViewStyle>;
         title?: StyleProp<TextStyle>;
         subtitle?: StyleProp<TextStyle>;
     }
@@ -24,15 +27,28 @@ export default function ImageListItem(props: ImageListItemProps) {
     const { image, onPress, subtitle, title, onMoreBtnPress, trackNumber, styles: s } = props;
 
     return (
-        <Pressable style={[styles.listItem, s?.wrapper]} onPress={onPress}>
+        <Pressable 
+            onPress={onPress}
+            onLongPress={onMoreBtnPress}
+            delayLongPress={300}
+            style={[
+                styles.listItem, 
+                !trackNumber && { paddingLeft: uiBase.padding.appHorizontalPadding },
+                !image && { marginBottom: 5 },
+                s?.wrapper, 
+            ]}
+        >
             <View style={[styles.trackNumberWrapper, !trackNumber && { display: "none" }]}>
                 <AppText style={[styles.trackNumber, s?.trackNumber]}>{trackNumber}</AppText>
             </View>
-            <Image source={{ uri: image }} style={[styles.img, s?.img]}/>
-            <View style={styles.textWrapper}>
+            <Image source={{ uri: image }} style={[styles.img, s?.img, !image && { display: "none" }]}/>
+            <View style={[styles.textWrapper, s?.textWrapper]}>
                 <AppText style={[styles.title, s?.title]} numberOfLines={1}>{title}</AppText>
-                <AppText style={[styles.subtitle, s?.subtitle]} numberOfLines={1}>{subtitle}</AppText>
+                <AppText style={[styles.subtitle, s?.subtitle, !subtitle && { display: "none" }]} numberOfLines={1}>{subtitle}</AppText>
             </View>
+            <Pressable onPress={onMoreBtnPress} style={[styles.moreBtnWrapper, !onMoreBtnPress && { display: "none" }]}>
+                <EllipsisIcon style={styles.moreBtnIcon} fill={uiBase.colors.textSecondary}/>
+            </Pressable>
         </Pressable>
     )
 }
@@ -57,22 +73,6 @@ export const SongListItem = function(props: SongListItemProps) {
     )
 }
 
-/* Renders <SongListItem>'s from API response */
-export const renderSongListItems = (songs: SpotifyTrack[] | null, withTrackNumber?: boolean) => {
-    return songs?.map((song, i) => {
-        return (
-            <SongListItem
-                image={song.album?.images?.[0]?.url}
-                songId={song.id}
-                subtitle={song?.artists?.map(a => a?.name)?.join(", ")}
-                title={song?.name}
-                key={i}
-                trackNumber={withTrackNumber ? i + 1 : undefined}
-            />
-        )
-    })
-}
-
 type AlbumListItemProps = Omit<ImageListItemProps, "onPress" | "onMoreBtnPress"> & {
     albumId: string;
 }
@@ -80,8 +80,10 @@ type AlbumListItemProps = Omit<ImageListItemProps, "onPress" | "onMoreBtnPress">
 export const AlbumListItem = function(props: AlbumListItemProps) {
     const { albumId, styles: s, ...rest } = props;
 
+    const navigation = useAppNavigation();
+
     const handlePress = () => {
-        alert("go to album: " + albumId)
+        navigation.navigate("Album", { albumId })
     }
 
     const albumStyles: ImageListItemProps["styles"] = {
@@ -97,22 +99,29 @@ export const AlbumListItem = function(props: AlbumListItemProps) {
     )
 }
 
-export const renderAlbumListItems = (albums: SpotifyAlbum[] | null, withReleaseYear?: boolean) => {
-    const getReleaseYear = (date: string) => {
-        return date?.split("-")?.[0];
+type ArtistListItemProps = Omit<ImageListItemProps, "onPress" | "onMoreBtnPress" | "subtitle"> & {
+    artistId: string;
+}
+
+export const ArtistListItem = function(props: ArtistListItemProps) {
+    const { artistId, styles: s, ...rest } = props;
+
+    const navigation = useAppNavigation();
+
+    const handlePress = () => {
+        navigation.navigate("Artist", { artistId })
     }
 
-    return albums?.map((album, i) => {
-        const subtitle = withReleaseYear ? "Released - " + getReleaseYear(album?.release_date) : album?.artists?.map(a => a?.name)?.join(", ");
+    const albumStyles: ImageListItemProps["styles"] = {
+        ...s,
+        img: {
+            width: 50,
+            height: 50,
+            borderRadius: 25
+        }
+    }
 
-        return (
-            <AlbumListItem
-                image={album?.images?.[0]?.url}
-                albumId={album.id}
-                subtitle={subtitle}
-                title={album?.name}
-                key={i}
-            />
-        )
-    })
+    return (
+        <ImageListItem {...rest} styles={albumStyles} onPress={handlePress}/>
+    )
 }

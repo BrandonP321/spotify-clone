@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     text: {
         color: uiBase.colors.textPrimary,
         fontFamily: uiBase.fontFamilies.primary.regular,
-        fontSize: 14
+        fontSize: 14,
     },
     heading: {
         fontFamily: uiBase.fontFamilies.primary.bold,

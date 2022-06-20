@@ -38,6 +38,7 @@ export type SpotifyArtist = BasicSpotifyResponseProps & {
 export type SpotifyAlbum = BasicSpotifyResponseProps & {
     album_type: string;
     total_tracks: number;
+    tracks: SpotifyItemsResponse<SpotifyTrack>;
     release_date: string;
     type: "album";
     album_group: string;
@@ -115,6 +116,30 @@ export class SpotifyFetcher {
                 const res = await APIFetcher.get<SpotifyItemsResponse<SpotifyAlbum>>(`${APIFetcher.SpotifyAPIDomain}/artists/${artistId}/albums?limit=5`);
 
                 resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getAlbum = async (albumId: string) => {
+        return new Promise<SpotifyAlbum>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyAlbum>(`${APIFetcher.SpotifyAPIDomain}/albums/${albumId}`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getSeveralArtists = async (artistIds: string[]) => {
+        return new Promise<SpotifyArtist[]>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<{ artists: SpotifyArtist[] }>(`${APIFetcher.SpotifyAPIDomain}/artists?ids=${artistIds?.join(",")}`);
+
+                resolve(res.artists);
             } catch (err) {
                 reject(err);
             }

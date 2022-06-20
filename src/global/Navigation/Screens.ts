@@ -1,11 +1,13 @@
-import { RouteProp } from "@react-navigation/native";
+import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export type RootStackParamList = {
     Home: {},
-    AuthLoading: {},
     Artist: {
         artistId: string;
+    }
+    Album: {
+        albumId: string;
     }
 }
 

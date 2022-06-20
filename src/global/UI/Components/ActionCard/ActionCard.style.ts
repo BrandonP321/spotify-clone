@@ -37,5 +37,8 @@ export default StyleSheet.create({
     },
     artistCardTitle: {
         textAlign: "center"
+    },
+    albumCardTitle: {
+        textAlign: "center"
     }
 })
