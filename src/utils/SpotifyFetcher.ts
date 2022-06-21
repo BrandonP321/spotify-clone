@@ -1,5 +1,6 @@
 import * as Linking from "expo-linking";
 import { APIFetcher, AuthUtils, StorageUtils } from ".";
+import { URLUtils } from "./UrlUtils";
 
 type SpotifyItemsResponse<T extends {}> = {
     items: T[];
@@ -164,10 +165,15 @@ export class SpotifyFetcher {
         })
     }
 
-    public static getUserPlaylists = () => {
+    public static getUserPlaylists = (params?: { limit?: number }) => {
+        const { limit } = params ?? {};
+
+        const url = URLUtils.getUrlWithParams(`${APIFetcher.SpotifyAPIDomain}/me/playlists`, [{ param: "limit", value: limit?.toString() }])
+        console.log(url);
+
         return new Promise<SpotifyPlaylist[]>(async (resolve, reject) => {
             try {
-                const res = await APIFetcher.get<SpotifyItemsResponse<SpotifyPlaylist>>(`${APIFetcher.SpotifyAPIDomain}/me/playlists`);
+                const res = await APIFetcher.get<SpotifyItemsResponse<SpotifyPlaylist>>(url);
 
                 resolve(res.items);
             } catch (err) {

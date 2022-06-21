@@ -13,13 +13,12 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [favoriteArtists, setFavoriteArtists] = useState<SpotifyArtist[] | null>(null);
   const [userPlaylists, setUserPlaylists] = useState<SpotifyPlaylist[] | null>(null);
 
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
   useEffect(() => {
+    // validate user auth on app load before doing anything
     AuthUtils.validateUserAuth().then(res => {
 
       SpotifyFetcher.getTopArtists().then(res => setFavoriteArtists(res.items));
-      SpotifyFetcher.getUserPlaylists().then(setUserPlaylists)
+      SpotifyFetcher.getUserPlaylists({ limit: 10 }).then(setUserPlaylists)
     }).catch(err => {
         console.log("err", err);
     })
