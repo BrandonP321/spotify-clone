@@ -16,9 +16,7 @@ import { ArtistListItem, SongListItem } from "../../global/UI/Components/SongLis
 import { uiBase } from "../../global/UI/styles/uiBase.style";
 import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher } from "../../utils";
 import { useAppNavigation } from "../../utils/NavigationHelper";
-import styles, { } from "./AlbumScreen.style";
-
-const gradientColor = (l: number, a?: number) => `hsla(0, 0%, ${l * 100}%, ${a ?? 1})`;
+import styles from "./AlbumScreen.style";
 
 type AlbumScreenProps = ScreenProps<"Album">;
 

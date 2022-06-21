@@ -59,6 +59,24 @@ export type SpotifyTrack = BasicSpotifyResponseProps & {
     type: string;
 }
 
+export type SpotifyPlaylist = BasicSpotifyResponseProps & {
+    description: string | null;
+    owner: { id: string; };
+    public: boolean;
+    followers: { total: number };
+    tracks: {
+        items: { track: SpotifyTrack }[];
+        /* url to next page of items */
+        next: string | null;
+        /* url to prev page of items */
+        previous: string | null;
+    };
+}
+
+export type SpotifyUser = Omit<BasicSpotifyResponseProps, "name"> & {
+    display_name: string;
+}
+
 export class SpotifyFetcher {
     private static APIDomain = ""
 
@@ -140,6 +158,54 @@ export class SpotifyFetcher {
                 const res = await APIFetcher.get<{ artists: SpotifyArtist[] }>(`${APIFetcher.SpotifyAPIDomain}/artists?ids=${artistIds?.join(",")}`);
 
                 resolve(res.artists);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getUserPlaylists = () => {
+        return new Promise<SpotifyPlaylist[]>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyItemsResponse<SpotifyPlaylist>>(`${APIFetcher.SpotifyAPIDomain}/me/playlists`);
+
+                resolve(res.items);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getPlaylistCoverImg = (playlistId: string) => {
+        return new Promise<SpotifyImg[]>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyImg[]>(`${APIFetcher.SpotifyAPIDomain}/playlists/${playlistId}`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getPlaylist = (playlistId: string) => {
+        return new Promise<SpotifyPlaylist>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyPlaylist>(`${APIFetcher.SpotifyAPIDomain}/playlists/${playlistId}`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getUser = (userId: string) => {
+        return new Promise<SpotifyUser>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyUser>(`${APIFetcher.SpotifyAPIDomain}/users/${userId}`);
+
+                resolve(res);
             } catch (err) {
                 reject(err);
             }

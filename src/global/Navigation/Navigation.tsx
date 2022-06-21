@@ -2,16 +2,15 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import HomeScreen from '../../Screens/HomeScreen/HomeScreen';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { uiBase } from '../UI/styles/uiBase.style';
 import FloatingMusicPlayer from '../UI/Components/FloatingMusicPlayer/FloatingMusicPlayer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenUtils } from '../../utils/ScreenUtils';
-import AuthLoadingScreen from '../../Screens/AuthLoadingScreen/AuthLoadingScreen';
 import { navigationRef } from '../../utils/NavigationHelper';
 import ArtistScreen from '../../Screens/ArtistScreen/ArtistScreen';
 import AlbumScreen from '../../Screens/AlbumScreen/AlbumScreen';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import PlaylistScreen from '../../Screens/PlaylistScreen/PlaylistScreen';
 
 export default function Navigation() {
 
@@ -68,7 +67,7 @@ const TabNavigator = () => {
       <Tab.Screen name={"Home"} component={HomeScreen} options={{}}/>
       <Tab.Screen name={"Artist"} component={ArtistScreen} options={{ tabBarButton: () => null }}/>
       <Tab.Screen name={"Album"} component={AlbumScreen} options={{ tabBarButton: () => null }}/>
-
+      <Tab.Screen name={"Playlist"} component={PlaylistScreen} options={{ tabBarButton: () => null }}/>
     </Tab.Navigator>
   )
 };

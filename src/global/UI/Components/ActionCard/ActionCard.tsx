@@ -1,7 +1,7 @@
 import { useNavigation, CommonActions, StackActions } from '@react-navigation/native';
 import React, { useState } from 'react'
 import { Image, ImageStyle, Pressable, Text, TextStyle, View, ViewStyle } from 'react-native';
-import { SpotifyAlbum, SpotifyArtist } from '../../../../utils';
+import { SpotifyAlbum, SpotifyArtist, SpotifyPlaylist } from '../../../../utils';
 import { NavigationHelper, useAppNavigation } from '../../../../utils/NavigationHelper';
 import { RootStackParamList } from '../../../Navigation/Screens';
 import { AppHeading, AppText } from '../AppText/AppText';
@@ -96,6 +96,30 @@ export const AlbumActionCard = (props: AlbumActionCardProps) => {
             customStyles={{ ...customStyles, title: styles.albumCardTitle }}
             title={albumData?.name}
             img={albumData?.images?.[0]?.url}
+        />
+    )
+}
+
+type PlaylistActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRightMargin"> & {
+    playlistData: SpotifyPlaylist;
+}
+
+export const PlaylistActionCard = (props: PlaylistActionCardProps) => {
+    const { customStyles, playlistData, ...rest } = props;
+
+    const navigation = useAppNavigation();
+
+    const handlePress = () => {
+        navigation.navigate("Playlist", { playlistId: playlistData?.id });
+    }
+
+    return (
+        <ActionCard
+            {...rest}
+            onPress={handlePress}
+            customStyles={{ ...customStyles, title: styles.albumCardTitle }}
+            title={playlistData?.name}
+            img={playlistData?.images?.[0]?.url}
         />
     )
 }

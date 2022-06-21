@@ -1,4 +1,4 @@
-import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export type RootStackParamList = {
@@ -8,6 +8,9 @@ export type RootStackParamList = {
     }
     Album: {
         albumId: string;
+    };
+    Playlist: {
+        playlistId: string;
     }
 }
 
