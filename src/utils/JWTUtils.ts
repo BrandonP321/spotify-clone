@@ -9,7 +9,7 @@ export class JWTUTils {
             return false;
         }
 
-        await StorageUtils.setSecureItemAsync("accessToken", token);
+        await StorageUtils.setSecureItemAsync("accessToken", token)
         store.dispatch(setAccessToken({ token }))
     }
 

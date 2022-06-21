@@ -86,7 +86,8 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
                                 key={i}
                                 title={track.name}
                                 subtitle={track.artists?.map(a => a.name)?.join(", ")}
-                                songId={track.id}
+                                song={track}
+                                allSongsInQueue={data.tracks.items?.map(item => item.track)}
                                 image={track.album?.images?.[0]?.url}
                                 styles={{
                                     textWrapper: {

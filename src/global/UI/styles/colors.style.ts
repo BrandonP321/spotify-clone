@@ -13,7 +13,9 @@ const textColors = {
 
 const appColors = {
     appBg: baseColors.black,
-    lime: baseColors.limeGreen
+    lime: baseColors.limeGreen,
+    dark: baseColors.darkGray,
+    slate: baseColors.slateGray
 }
 
 export const colors = {

@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, View, Image, StyleProp, ViewStyle, ImageStyle, TextStyle } from 'react-native';
 import { useAppNavigation } from '../../../../utils/NavigationHelper';
 import { AppText } from '../AppText/AppText';
 import styles from "./ImageListItem.style";
 import EllipsisIcon from "../../../../../assets/ellipsis-vertical.svg";
 import { uiBase } from '../../styles/uiBase.style';
+import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
+import { getQueueFromSongList, getQueueItemFromSong, playSong } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
+import { SpotifyTrack } from '../../../../utils';
 
 type ImageListItemProps = {
     image?: string;
@@ -26,16 +29,21 @@ type ImageListItemProps = {
 export default function ImageListItem(props: ImageListItemProps) {
     const { image, onPress, subtitle, title, onMoreBtnPress, trackNumber, styles: s } = props;
 
+    const [isPressedIn, setIsPressedIn] = useState(false);
+
     return (
         <Pressable 
             onPress={onPress}
+            onPressIn={() => setIsPressedIn(true)}
+            onPressOut={() => setIsPressedIn(false)}
             onLongPress={onMoreBtnPress}
             delayLongPress={300}
             style={[
                 styles.listItem, 
                 !trackNumber && { paddingLeft: uiBase.padding.appHorizontalPadding },
                 !image && { marginBottom: 5 },
-                s?.wrapper, 
+                isPressedIn && { transform: [{ scale: 0.99 }] },
+                s?.wrapper,
             ]}
         >
             <View style={[styles.trackNumberWrapper, !trackNumber && { display: "none" }]}>
@@ -54,22 +62,41 @@ export default function ImageListItem(props: ImageListItemProps) {
 }
 
 type SongListItemProps = Omit<ImageListItemProps, "onPress" | "onMoreBtnPress"> & {
-    songId: string;
+    song: SpotifyTrack;
+    allSongsInQueue: SpotifyTrack[];
 }
 
 export const SongListItem = function(props: SongListItemProps) {
-    const { songId, ...rest } = props;
+    const { song, allSongsInQueue, styles: style, ...rest } = props;
+
+    const dispatch = useAppDispatch();
+    const player = useMusicPlayer();
 
     const handlePress = () => {
-        alert("play song id: " + songId);
+        const queue = getQueueFromSongList(allSongsInQueue)
+
+        dispatch(playSong({
+            song: getQueueItemFromSong(song),
+            queue,
+            indexInQueue: queue.findIndex(s => s.id === song?.id)
+        }));
     }
 
     const handleMoreBtnPress = () => {
-        alert("handle more for song id: " + songId);
+        // dispatch
+    }
+
+    const isSongPlaying = player.currentSong?.id === song?.id;
+
+    const itemStyles: SongListItemProps["styles"] = {
+        ...style,
+        title: [style?.title, {
+            color: isSongPlaying ? uiBase.colors.lime(1) : uiBase.colors.textPrimary,
+        }],
     }
 
     return (
-        <ImageListItem {...rest} onPress={handlePress} onMoreBtnPress={handleMoreBtnPress}/>
+        <ImageListItem {...rest} styles={itemStyles} onPress={handlePress} onMoreBtnPress={handleMoreBtnPress}/>
     )
 }
 

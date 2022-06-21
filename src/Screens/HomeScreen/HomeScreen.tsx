@@ -1,11 +1,13 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
+import { useAppDispatch, useUserAuth } from '../../global/features/hooks'
+import { setAuthStatus } from '../../global/features/slices/AuthSlice/AuthSlice'
 import { RootStackParamList, ScreenProps } from '../../global/Navigation/Screens'
 import { ArtistActionCard, PlaylistActionCard } from '../../global/UI/Components/ActionCard/ActionCard'
 import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScrollWrapper/HorizontalScrollWrapper'
-import { AuthUtils } from '../../utils'
-import { SpotifyArtist, SpotifyFetcher, SpotifyPlaylist } from '../../utils/SpotifyFetcher'
+import { AuthUtils } from '../../utils';
+import { PlayerFetcher, SpotifyArtist, SpotifyFetcher, SpotifyPlaylist } from '../../utils/SpotifyFetcher'
 
 type HomeScreenProps = ScreenProps<"Home">
 
@@ -18,9 +20,9 @@ export default function HomeScreen(props: HomeScreenProps) {
     AuthUtils.validateUserAuth().then(res => {
 
       SpotifyFetcher.getTopArtists().then(res => setFavoriteArtists(res.items));
-      SpotifyFetcher.getUserPlaylists({ limit: 10 }).then(setUserPlaylists)
+      SpotifyFetcher.getUserPlaylists({ limit: 10 }).then(setUserPlaylists);
     }).catch(err => {
-        console.log("err", err);
+      console.log("err", err);
     })
   }, []);
 
@@ -29,7 +31,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       <HorizontalScrollWrapper heading={"Good evening"}>
         {favoriteArtists?.map((artist, i) => {
           return (
-            <ArtistActionCard key={i} artistData={artist} withoutRightMargin={i === (favoriteArtists?.length ?? 0) - 1}/>
+            <ArtistActionCard key={i} artistData={artist} withoutRightMargin={i === (favoriteArtists?.length ?? 0) - 1} />
           )
         })}
       </HorizontalScrollWrapper>
@@ -37,7 +39,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       <HorizontalScrollWrapper heading={"Your playlists"}>
         {userPlaylists?.map((playlist, i) => {
           return (
-            <PlaylistActionCard key={i} playlistData={playlist} withoutRightMargin={i === (userPlaylists.length - 1)}/>
+            <PlaylistActionCard key={i} playlistData={playlist} withoutRightMargin={i === (userPlaylists.length - 1)} />
           )
         })}
       </HorizontalScrollWrapper>

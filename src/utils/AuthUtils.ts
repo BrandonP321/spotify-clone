@@ -3,7 +3,6 @@ import * as Linking from "expo-linking";
 import { JWTUTils, SpotifyFetcher, StorageUtils } from ".";
 
 export class AuthUtils {
-    /*  */
     public static validateUserAuth = async () => {
         // attempt to grab tokens from storage
         const aToken = await StorageUtils.getSecureItemAsync("accessToken");
