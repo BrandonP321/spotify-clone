@@ -12,10 +12,15 @@ export class AuthUtils {
         // if no tokens found, have user re-auth
         if (!aToken || !rToken) {
             return this.haveUserAuth();
+        } else {
+            // else refresh access token on initial app load
+            return SpotifyFetcher.getRefreshedToken().then(res => {
+                JWTUTils.storeAccessToken(res?.accessToken);
+            }).catch(err => {
+                // if any error occurred, have user re-auth
+                this.haveUserAuth();
+            })
         }
-
-        // if access & refresh token exist, store access token in redux store
-        return JWTUTils.storeAccessToken(aToken);
     }
 
     public static haveUserAuth = async () => {
