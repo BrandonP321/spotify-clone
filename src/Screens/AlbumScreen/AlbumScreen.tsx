@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from "react"
 import { Image, ImageStyle, Pressable, StyleProp, Text, View } from "react-native"
 import Animated, { interpolate, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import ScreenWrapper from "../../global/Components/ScreenWrapper/ScreenWrapper";
+import { useAppDispatch, useMusicPlayer } from "../../global/features/hooks";
+import { getQueueFromSongList, playSong } from "../../global/features/slices/MusicPlayerSlice/musicPlayerSlice";
 import { ScreenProps } from "../../global/Navigation/Screens"
 import { AlbumActionCard } from "../../global/UI/Components/ActionCard/ActionCard";
 import { AppHeading, AppText } from "../../global/UI/Components/AppText/AppText";
@@ -23,6 +25,8 @@ type AlbumScreenProps = ScreenProps<"Album">;
 const AlbumScreen = (props: AlbumScreenProps) => {
     const { albumId } = props.route.params;
 
+    const dispatch = useAppDispatch();
+    const player = useMusicPlayer();
     const navigation = useAppNavigation();
 
     const scrollOffset = useSharedValue(0);
@@ -37,8 +41,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
         SpotifyFetcher.getAlbum(albumId).then(album => {
             setData(album);
 
-            SpotifyFetcher.getSeveralArtists(album.artists?.map(a => a.id)).then(setAllArtists).catch(err => console.log(err.response))
-
+            SpotifyFetcher.getSeveralArtists(album.artists?.map(a => a.id)).then(setAllArtists)
             SpotifyFetcher.getArtistAlbums(album.artists?.[0]?.id).then(({ items: albums }) => {
 
                 // filter out current album from artists albums and update state
@@ -69,7 +72,10 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     const releaseDate = `Album - ${data?.release_date?.split("-")?.[0]}`;
 
     const handlePlayBtnPress = () => {
-        alert("Play btn press");
+        data && dispatch(playSong({
+            queue: getQueueFromSongList(data.tracks.items, { type: "album", albumId: data.id, albumName: data.name }),
+            indexInQueue: 0
+        }))
     }
 
     const PlayBtn = (props: { fixedIcon?: boolean; }) => (
@@ -79,6 +85,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
             scrollOffset={scrollOffset}
             isFixedInstance={props.fixedIcon}
             top={topContentHeight + albumTitleHeight}
+            pauseOnClick={player.currentSong?.context?.type === "album" && player.currentSong?.context?.albumId === data?.id}
         />
     )
 

@@ -2,6 +2,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react'
 import { View, Text, Image } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
+import { useAppDispatch, useMusicPlayer } from '../../global/features/hooks';
+import { getQueueFromSongList, playSong } from '../../global/features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { ScreenProps } from '../../global/Navigation/Screens'
 import { AppHeading, AppText } from '../../global/UI/Components/AppText/AppText';
 import CoverImgScreenWrapper from '../../global/UI/Components/CoverImgScreen/CoverImgScreenWrapper';
@@ -15,6 +17,9 @@ type PlaylistScreenProps = ScreenProps<"Playlist">;
 
 export default function PlaylistScreen({ navigation, route }: PlaylistScreenProps) {
     const { playlistId } = route.params;
+
+    const dispatch = useAppDispatch();
+    const player = useMusicPlayer();
 
     const scrollOffset = useSharedValue(0);
 
@@ -43,7 +48,10 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
     }, [data])
 
     const handlePlayBtnPress = () => {
-        alert("Play btn press");
+        data && dispatch(playSong({
+            queue: getQueueFromSongList(data.tracks.items.map(item => item.track), { type: "playlist", playlistId: data.id, playlistName: data.name }),
+            indexInQueue: 0
+        }))
     }
 
     const PlayBtn = (props: { fixedIcon?: boolean; }) => (
@@ -53,6 +61,7 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
             scrollOffset={scrollOffset}
             isFixedInstance={props.fixedIcon}
             top={topContentHeight + albumTitleHeight}
+            pauseOnClick={player.currentSong?.context?.type === "playlist" && player.currentSong?.context?.playlistId === data?.id}
         />
     )
 

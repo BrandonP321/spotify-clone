@@ -14,11 +14,16 @@ import { ArtistActionCard } from '../../global/UI/Components/ActionCard/ActionCa
 import { PlayIconBtn } from '../../global/UI/Components/PlayBtn/PlayIconBtn';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import AnimatedGradient from '../../global/UI/Components/AnimatedGradient/AnimatedGradient';
+import { getQueueFromSongList, playSong } from '../../global/features/slices/MusicPlayerSlice/musicPlayerSlice';
+import { useAppDispatch, useMusicPlayer } from '../../global/features/hooks';
 
 type ArtistScreenProps = ScreenProps<"Artist">;
 
 export default function ArtistScreen(props: ArtistScreenProps) {
     const { artistId } = props.route.params;
+
+    const dispatch = useAppDispatch();
+    const player = useMusicPlayer();
 
     const [data, setData] = useState<SpotifyArtist | null>(null);
     const [topTracks, setTopTracks] = useState<SpotifyTrack[] | null>(null);
@@ -52,14 +57,23 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     }, [data])
 
     const handlePlayBtnPress = () => {
-        alert("play artist music");
-
+        topTracks && data && dispatch(playSong({
+            queue: getQueueFromSongList(topTracks, { type: "artist", artistId: data.id, artistName: data.name }),
+            indexInQueue: 0
+        }))
     }
 
     const scrollOffset = useSharedValue(0);
 
     const PlayBtn = (props: { fixedIcon?: boolean; }) => (
-        <PlayIconBtn onPress={handlePlayBtnPress} style={styles.playBtn} scrollOffset={scrollOffset} isFixedInstance={props.fixedIcon} top={playIconPositionTop}/>
+        <PlayIconBtn 
+            onPress={handlePlayBtnPress} 
+            style={styles.playBtn} 
+            scrollOffset={scrollOffset} 
+            isFixedInstance={props.fixedIcon} 
+            top={playIconPositionTop}
+            pauseOnClick={player.currentSong?.context?.type === "artist" && player.currentSong?.context?.artistId === data?.id}
+        />
     )
 
     const handleScroll = useAnimatedScrollHandler((e) => {
