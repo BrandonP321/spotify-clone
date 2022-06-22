@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewBase, ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
-import LoadingSpinnerContainer from '../../UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
+import LoadingContainer from '../../UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
 import styles from "./ScreenWrapper.style";
 
 export type ScreenWrapperProps = {
@@ -29,7 +29,7 @@ export default function ScreenWrapper(props: ScreenWrapperProps) {
 
     return (
         <View>
-            <LoadingSpinnerContainer loading={showLoading}/>
+            <LoadingContainer loading={showLoading}/>
             <Animated.ScrollView 
                 stickyHeaderIndices={props.stickyHeaderIndices} 
                 contentContainerStyle={[styles.pageWrapper, props.style]} 

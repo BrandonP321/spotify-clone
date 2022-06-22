@@ -12,5 +12,12 @@ export default StyleSheet.create({
         backgroundColor: uiBase.colors.appBg(1),
         zIndex: 2000,
         opacity: 0,
+    },
+    spinnerWrapper: {
+
+    },
+    spinner: {
+        width: 40,
+        height: 40,
     }
 })
