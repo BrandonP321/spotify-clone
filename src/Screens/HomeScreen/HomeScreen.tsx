@@ -7,7 +7,7 @@ import { RootStackParamList, ScreenProps } from '../../global/Navigation/Screens
 import { ArtistActionCard, PlaylistActionCard } from '../../global/UI/Components/ActionCard/ActionCard'
 import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScrollWrapper/HorizontalScrollWrapper'
 import { AuthUtils } from '../../utils';
-import { PlayerFetcher, SpotifyArtist, SpotifyFetcher, SpotifyPlaylist } from '../../utils/SpotifyFetcher'
+import { SpotifyArtist, SpotifyFetcher, SpotifyPlaylist } from '../../utils/SpotifyFetcher'
 
 type HomeScreenProps = ScreenProps<"Home">
 

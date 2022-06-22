@@ -38,7 +38,7 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
     useEffect(() => {
         /* After content loads, get height of album title text */
         playlistTitleEle.current?.measure((x, y, w, h) => {
-            setAlbumTitleHeight(h);
+            setAlbumTitleHeight(h ?? 0);
         });
     }, [data])
 

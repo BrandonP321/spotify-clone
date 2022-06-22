@@ -56,7 +56,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     useEffect(() => {
         /* After content loads, get height of album title text */
         albumTitleEle.current?.measure((x, y, w, h) => {
-            setAlbumTitleHeight(h);
+            setAlbumTitleHeight(h ?? 0);
         });
     }, [data])
 
