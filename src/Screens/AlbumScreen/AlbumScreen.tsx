@@ -109,6 +109,11 @@ const AlbumScreen = (props: AlbumScreenProps) => {
                                 title={song.name}
                                 subtitle={song.artists?.map(a => a.name)?.join(", ")}
                                 song={song}
+                                songContext={{
+                                    type: "album",
+                                    albumId: data?.id,
+                                    albumName: data?.name
+                                }}
                                 allSongsInQueue={data.tracks.items}
                                 styles={{
                                     textWrapper: {

@@ -6,7 +6,7 @@ import styles from "./ImageListItem.style";
 import EllipsisIcon from "../../../../../assets/ellipsis-vertical.svg";
 import { uiBase } from '../../styles/uiBase.style';
 import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
-import { getQueueFromSongList, getQueueItemFromSong, playSong } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
+import { getQueueFromSongList, getQueueItemFromSong, MusicPlayerState, playSong, SongContext } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { SpotifyTrack } from '../../../../utils';
 
 type ImageListItemProps = {
@@ -64,19 +64,19 @@ export default function ImageListItem(props: ImageListItemProps) {
 type SongListItemProps = Omit<ImageListItemProps, "onPress" | "onMoreBtnPress"> & {
     song: SpotifyTrack;
     allSongsInQueue: SpotifyTrack[];
+    songContext: SongContext;
 }
 
 export const SongListItem = function(props: SongListItemProps) {
-    const { song, allSongsInQueue, styles: style, ...rest } = props;
+    const { song, allSongsInQueue, styles: style, songContext, ...rest } = props;
 
     const dispatch = useAppDispatch();
     const player = useMusicPlayer();
 
     const handlePress = () => {
-        const queue = getQueueFromSongList(allSongsInQueue)
+        const queue = getQueueFromSongList(allSongsInQueue, songContext)
 
         dispatch(playSong({
-            song: getQueueItemFromSong(song),
             queue,
             indexInQueue: queue.findIndex(s => s.id === song?.id)
         }));

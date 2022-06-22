@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Image, Pressable, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useAppDispatch, useMusicPlayer, useUserAuth } from '../../../features/hooks';
@@ -8,6 +8,7 @@ import styles from "./FloatingMusicPlayer.style";
 import PlayIcon from "../../../../../assets/play-solid.svg";
 import PauseIcon from "../../../../../assets/pause-solid.svg";
 import { pauseSong, resumeSong } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
+import MusicPlayerModal from '../MusicPlayerModal/MusicPlayerModal';
 
 type Props = {}
 
@@ -16,6 +17,7 @@ export default (props: Props) => {
 
     const player = useMusicPlayer();
     const animBottomPosition = useSharedValue(uiBase.heights.floatingMusicPlayerHeight * -1);
+    const [showPlayerModal, setShowPlayerModal] = useState(false);
 
     useEffect(() => {
         
@@ -28,9 +30,9 @@ export default (props: Props) => {
         })
     }, [player.currentSong, player.currentSong?.id]);
 
-    const handlePlayerPress = () => {
-
-    }
+    const togglePlayerModal = useCallback(() => {
+        setShowPlayerModal(!showPlayerModal);
+    }, [showPlayerModal])
 
     const togglePlayState = useCallback(() => {
         dispatch(player.isPaused ? resumeSong() : pauseSong());
@@ -47,17 +49,21 @@ export default (props: Props) => {
     const PlayStateIcon = player.isPaused ? PlayIcon : PauseIcon;
 
     return (
-        <Animated.View style={[styles.playerWrapper, animStyles]}>
-            <Pressable style={[styles.musicPlayer]} onPress={handlePlayerPress}>
-                <Image source={{ uri: albumImg }} style={styles.image}/>
-                <View style={styles.textWrapper}>
-                    <AppHeading style={styles.title} numberOfLines={1}>{title}</AppHeading>
-                    <AppText style={styles.artist} numberOfLines={1}>{artist}</AppText>
-                </View>
-                <Pressable style={styles.playIconWrapper} onPress={togglePlayState}>
-                    <PlayStateIcon style={styles.playIcon} fill={uiBase.colors.textPrimary}/>
+        <>
+            <MusicPlayerModal show={showPlayerModal} hide={() => setShowPlayerModal(false)}/>
+
+            <Animated.View style={[styles.playerWrapper, animStyles]}>
+                <Pressable style={[styles.musicPlayer]} onPress={togglePlayerModal}>
+                    <Image source={{ uri: albumImg }} style={styles.image}/>
+                    <View style={styles.textWrapper}>
+                        <AppHeading style={styles.title} numberOfLines={1}>{title}</AppHeading>
+                        <AppText style={styles.artist} numberOfLines={1}>{artist}</AppText>
+                    </View>
+                    <Pressable style={styles.playIconWrapper} onPress={togglePlayState}>
+                        <PlayStateIcon style={styles.playIcon} fill={uiBase.colors.textPrimary}/>
+                    </Pressable>
                 </Pressable>
-            </Pressable>
-        </Animated.View>
+            </Animated.View>
+        </>
     )
 }

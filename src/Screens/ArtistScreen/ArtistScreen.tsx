@@ -141,6 +141,11 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                                     subtitle={track?.artists?.map(a => a?.name)?.join(", ")}
                                     image={track.album?.images?.[0]?.url}
                                     song={track}
+                                    songContext={{
+                                        type: "artist",
+                                        artistId: data?.id ?? "",
+                                        artistName: data?.name ?? ""
+                                    }}
                                     allSongsInQueue={topTracks}
                                     trackNumber={i + 1}
                                 />

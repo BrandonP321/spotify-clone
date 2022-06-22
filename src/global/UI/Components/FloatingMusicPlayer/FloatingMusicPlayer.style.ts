@@ -22,7 +22,7 @@ export default StyleSheet.create({
   musicPlayer: {
     height: uiBase.heights.floatingMusicPlayerHeight,
     width: vw - uiBase.padding.appHorizontalPadding,
-    backgroundColor: uiBase.colors.slate(1),
+    backgroundColor: "rgb(60, 60, 60)",
     borderRadius: 7,
     zIndex: 10,
     flexDirection: "row",

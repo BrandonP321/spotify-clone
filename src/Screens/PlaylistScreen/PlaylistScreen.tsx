@@ -87,6 +87,11 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
                                 title={track.name}
                                 subtitle={track.artists?.map(a => a.name)?.join(", ")}
                                 song={track}
+                                songContext={{
+                                    type: "playlist",
+                                    playlistId: data?.id,
+                                    playlistName: data?.name
+                                }}
                                 allSongsInQueue={data.tracks.items?.map(item => item.track)}
                                 image={track.album?.images?.[0]?.url}
                                 styles={{
