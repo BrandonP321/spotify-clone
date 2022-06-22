@@ -15,6 +15,7 @@ import { AppHeading, AppText } from '../AppText/AppText';
 import { pauseSong, playNextSong, playPrevSong, resumeSong, SongContext } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { useAppNavigation } from '../../../../utils/NavigationHelper';
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import { HandlerStateChangeEvent, Swipeable } from 'react-native-gesture-handler';
 
 type MusicPlayerModalProps = {
     show: boolean;
@@ -72,28 +73,49 @@ type PlayerModalOverlayProps = {
 const PlayerModalOverlay = (props: PlayerModalOverlayProps) => {
     const { children, toggleOverlay, showOverlay, hideModal, songContext } = props;
 
+    const dispatch = useAppDispatch();
+
     const overlayOpacity = useSharedValue(1);
+    const swipOffset = useSharedValue(0);
 
     useEffect(() => {
         overlayOpacity.value = withTiming(showOverlay ? 1 : 0, {
             duration: 300
         })
-
-
     }, [showOverlay])
 
     const animStyles = useAnimatedStyle(() => ({
         opacity: overlayOpacity.value
     }))
 
+    const handleSwipe = (e: HandlerStateChangeEvent<Record<string, unknown>>) => {
+        const deltaY = e.nativeEvent.translationY as number;
+        const deltaX = e.nativeEvent.translationX as number;
+        
+        // only perform actions if user swiped horizontally
+        if (Math.abs(deltaY) <= 50) {
+            if (deltaX >= 75) {
+                dispatch(playPrevSong())
+            } else if (deltaX <= -75) {
+                dispatch(playNextSong())
+            }
+        }
+    }
+
     return (
-        <Animated.View style={[styles.overlayWrapper, animStyles]}>
-            <PlayerModalHeader hideModal={hideModal} songContext={songContext}/>
-            <Pressable style={styles.overlay} onPress={toggleOverlay}/>
-            <View pointerEvents={showOverlay ? "auto" : "none"} style={styles.overlayChildren}>
-                {children}
-            </View>
-        </Animated.View>
+        <Swipeable 
+            childrenContainerStyle={styles.swipeableOverlay} 
+            containerStyle={styles.swipeableOverlay} 
+            onEnded={handleSwipe}
+        >
+            <Animated.View style={[styles.overlayWrapper, animStyles]}>
+                <PlayerModalHeader hideModal={hideModal} songContext={songContext}/>
+                <Pressable style={styles.overlay} onPress={toggleOverlay}/>
+                <View pointerEvents={showOverlay ? "auto" : "none"} style={styles.overlayChildren}>
+                    {children}
+                </View>
+            </Animated.View>
+        </Swipeable>
     )
 }
 

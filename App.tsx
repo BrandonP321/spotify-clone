@@ -1,3 +1,4 @@
+import "react-native-gesture-handler"
 import React, { useEffect } from 'react';
 import { LogBox, NativeModules, View } from 'react-native';
 import styles from "./App.style";
@@ -8,13 +9,16 @@ import { Provider } from 'react-redux';
 import { store } from './src/global/features/store';
 import { useFonts } from 'expo-font';
 import { Poppins_300Light, Poppins_500Medium, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 LogBox.ignoreLogs(["Require cycle"]);
 
 export default function Index() {
   return (
     <Provider store={store}>
-      <App />
+      <GestureHandlerRootView style={{flex: 1}}>
+        <App />
+      </GestureHandlerRootView>
     </Provider>
   )
 }

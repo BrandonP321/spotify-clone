@@ -54,7 +54,6 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     const handlePlayBtnPress = () => {
         alert("play artist music");
 
-        props.navigation.push("Album", { albumId: albums?.[0]?.id ?? "" })
     }
 
     const scrollOffset = useSharedValue(0);
