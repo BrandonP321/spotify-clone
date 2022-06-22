@@ -109,10 +109,11 @@ export default StyleSheet.create({
         textAlign: "center"
     },
     title: {
-
+        fontSize: 20,
+        lineHeight: 22
     },
     artists: {
-
+        color: uiBase.colors.textSecondary
     },
     progressTrack: {
         backgroundColor: uiBase.colors.slate(1),
