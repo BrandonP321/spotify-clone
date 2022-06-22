@@ -11,6 +11,8 @@ import { useFonts } from 'expo-font';
 import { Poppins_300Light, Poppins_500Medium, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from "expo-splash-screen";
+import { DeviceUtils } from "./src/utils/DeviceUtils";
+import * as NavigationBar from "expo-navigation-bar"
 
 LogBox.ignoreLogs(["Require cycle"]);
 
@@ -38,8 +40,10 @@ export const App = function App() {
     /* Gives app access to javascript URL functionality */
     setupURLPolyfill();
 
-    /* Android specific navigation bar settings */
-    // NavigationBar.setBackgroundColorAsync("rgba(0, 0, 0, 1)");
+    /* If android, make navigation bar black */
+    if (DeviceUtils.Android) {
+      NavigationBar.setBackgroundColorAsync("rgba(0, 0, 0, 1)");
+    }
   }, []);
 
   if (!fontsLoaded) {
