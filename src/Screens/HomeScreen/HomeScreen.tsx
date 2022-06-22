@@ -2,12 +2,12 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper'
 import { useAppDispatch, useUserAuth } from '../../global/features/hooks'
-import { setAuthStatus } from '../../global/features/slices/AuthSlice/AuthSlice'
 import { RootStackParamList, ScreenProps } from '../../global/Navigation/Screens'
 import { ArtistActionCard, PlaylistActionCard } from '../../global/UI/Components/ActionCard/ActionCard'
 import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScrollWrapper/HorizontalScrollWrapper'
 import { AuthUtils } from '../../utils';
-import { SpotifyArtist, SpotifyFetcher, SpotifyPlaylist } from '../../utils/SpotifyFetcher'
+import { SpotifyArtist, SpotifyFetcher, SpotifyPlaylist } from '../../utils/SpotifyFetcher';
+import * as SplashScreen from "expo-splash-screen";
 
 type HomeScreenProps = ScreenProps<"Home">
 
@@ -26,8 +26,17 @@ export default function HomeScreen(props: HomeScreenProps) {
     })
   }, []);
 
+  useEffect(() => {
+    if (!!userPlaylists && !!favoriteArtists) {
+      // wait briefly so content has a chance to render before hiding splash
+      setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 200)
+    }
+  }, [userPlaylists, favoriteArtists])
+
   return (
-    <ScreenWrapper loading={!favoriteArtists ?? !userPlaylists}>
+    <ScreenWrapper>
       <HorizontalScrollWrapper heading={"Good evening"}>
         {favoriteArtists?.map((artist, i) => {
           return (

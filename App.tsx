@@ -10,10 +10,16 @@ import { store } from './src/global/features/store';
 import { useFonts } from 'expo-font';
 import { Poppins_300Light, Poppins_500Medium, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as SplashScreen from "expo-splash-screen";
 
 LogBox.ignoreLogs(["Require cycle"]);
 
 export default function Index() {
+  useEffect(() => {
+    // keep splash screen active until hidden by home screen being rendered
+    SplashScreen.preventAutoHideAsync();
+  }, [])
+
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{flex: 1}}>
