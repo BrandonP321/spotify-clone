@@ -15,13 +15,10 @@ import { DeviceUtils } from "./src/utils/DeviceUtils";
 import * as NavigationBar from "expo-navigation-bar"
 
 LogBox.ignoreLogs(["Require cycle"]);
+// keep splash screen active until hidden by home screen being rendered
+SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
-  useEffect(() => {
-    // keep splash screen active until hidden by home screen being rendered
-    SplashScreen.preventAutoHideAsync();
-  }, [])
-
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{flex: 1}}>
