@@ -4,7 +4,8 @@ import { JWTUTils } from "./JWTUtils";
 
 export class APIFetcher {
     // TODO: use different values based on environment
-    public static APIDomain = "http://10.0.0.253:8000";
+    // public static APIDomain = "http://10.0.0.253:8000";
+    public static APIDomain = "https://brandonp-spotify-server.herokuapp.com";
     // public static APIDomain = "http://192.168.1.250:8000";
     public static SpotifyAPIDomain = "https://api.spotify.com/v1"
 
