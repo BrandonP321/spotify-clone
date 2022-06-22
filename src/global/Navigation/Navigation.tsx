@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import HomeScreen from '../../Screens/HomeScreen/HomeScreen';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { uiBase } from '../UI/styles/uiBase.style';
 import FloatingMusicPlayer from '../UI/Components/FloatingMusicPlayer/FloatingMusicPlayer';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,6 +11,12 @@ import { navigationRef } from '../../utils/NavigationHelper';
 import ArtistScreen from '../../Screens/ArtistScreen/ArtistScreen';
 import AlbumScreen from '../../Screens/AlbumScreen/AlbumScreen';
 import PlaylistScreen from '../../Screens/PlaylistScreen/PlaylistScreen';
+import HomeActiveIcon from "../../../assets/tabIcons/house-blank-solid.svg";
+import HomeInactiveIcon from "../../../assets/tabIcons/house-blank-light.svg";
+import SearchActiveIcon from "../../../assets/tabIcons/magnifying-glass-solid.svg";
+import SearchInactiveIcon from "../../../assets/tabIcons/magnifying-glass-light.svg";
+import LibraryActiveIcon from "../../../assets/tabIcons/books-solid.svg";
+import LibraryInactiveIcon from "../../../assets/tabIcons/books-light.svg";
 
 export default function Navigation() {
 
@@ -35,7 +41,8 @@ const styles = StyleSheet.create({
     zIndex: 10
   },
   tabIcon: {
-    color: uiBase.colors.textPrimary
+    height: 25,
+    width: 25,
   },
   gradientBg: {
     position: "absolute",
@@ -47,6 +54,20 @@ const styles = StyleSheet.create({
   }
 })
 
+const sharedTabIconProps = {
+  style: styles.tabIcon
+}
+
+const inactiveIconProps = {
+  ...sharedTabIconProps,
+  fill: uiBase.colors.textSecondary
+}
+
+const activeIconProps = {
+  ...sharedTabIconProps,
+  fill: uiBase.colors.textPrimary
+}
+
 const TabNavigator = () => {
   /* Can use one tab navigator for entire app since bottom tab bar is always available for navigation */
   const Tab = createBottomTabNavigator();
@@ -56,6 +77,8 @@ const TabNavigator = () => {
       header: () => null,
       tabBarStyle: styles.tabBar,
       tabBarIconStyle: styles.tabIcon,
+      tabBarActiveTintColor: uiBase.colors.textPrimary,
+      tabBarInactiveTintColor: uiBase.colors.textSecondary,
       tabBarBackground: () => (
         <LinearGradient
           style={styles.gradientBg}
@@ -64,10 +87,18 @@ const TabNavigator = () => {
         />
       ),
     })}>
-      <Tab.Screen name={"Home"} component={HomeScreen} options={{}}/>
+      <Tab.Screen name={"Home"} component={HomeScreen} options={({route}) => ({
+        tabBarIcon: ({ color, focused, size }) => focused ? <HomeActiveIcon {...activeIconProps}/> : <HomeInactiveIcon {...inactiveIconProps}/>
+      })}/>
       <Tab.Screen name={"Artist"} component={ArtistScreen} options={{ tabBarButton: () => null }}/>
       <Tab.Screen name={"Album"} component={AlbumScreen} options={{ tabBarButton: () => null }}/>
       <Tab.Screen name={"Playlist"} component={PlaylistScreen} options={{ tabBarButton: () => null }}/>
+      <Tab.Screen name={"Search"} component={View} options={({route}) => ({
+        tabBarIcon: ({ color, focused, size }) => focused ? <SearchActiveIcon {...activeIconProps}/> : <SearchInactiveIcon {...inactiveIconProps}/>
+      })}/>
+      <Tab.Screen name={"Library"} component={View} options={({route}) => ({
+        tabBarIcon: ({ color, focused, size }) => focused ? <LibraryActiveIcon {...activeIconProps}/> : <LibraryInactiveIcon {...inactiveIconProps}/>
+      })}/>
     </Tab.Navigator>
   )
 };
