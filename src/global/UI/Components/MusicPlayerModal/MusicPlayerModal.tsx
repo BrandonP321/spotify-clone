@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
 import styles, { modalInnerWidth } from "./MusicPlayerModal.style";
 import { uiBase } from '../../styles/uiBase.style';
-import { Image, Pressable, View, Text } from 'react-native';
+import { Image, Pressable, View, Text, BackHandler } from 'react-native';
 import { ScreenUtils } from '../../../../utils/ScreenUtils';
 import DownChevron from "../../../../../assets/chevron-down-solid.svg";
 import NextSongIcon from "../../../../../assets/forward-step-solid.svg";
@@ -31,10 +31,24 @@ export default function MusicPlayerModal(props: MusicPlayerModalProps) {
 
     const [showModalOverlay, setShowModalOverlay] = useState(true);
 
+    /* When user presses native android back btn, close modal if open */
+    const onBackPress = useCallback(() => {
+        hide();
+
+        return true
+    }, [])
+
     useEffect(() => {
         modalTopPosition.value = withTiming(show ? 0 : ScreenUtils.vh, {
             duration: 300,
         })
+
+        if (show) {
+            // when modal is visible, add custom behavior to android back btn to close modal
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        } else {
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }
     }, [show])
 
     const animStyles = useAnimatedStyle(() => ({
