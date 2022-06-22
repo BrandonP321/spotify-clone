@@ -71,9 +71,17 @@ const AlbumScreen = (props: AlbumScreenProps) => {
 
     const releaseDate = `Album - ${data?.release_date?.split("-")?.[0]}`;
 
+    const modifiedTracks = React.useMemo(() => data?.tracks?.items?.map(item => ({
+        ...item,
+        album: {
+            ...item.album,
+            images: data.images
+        }
+    })), [data])
+
     const handlePlayBtnPress = () => {
-        data && dispatch(playSong({
-            queue: getQueueFromSongList(data.tracks.items, { type: "album", albumId: data.id, albumName: data.name }),
+        modifiedTracks && data && dispatch(playSong({
+            queue: getQueueFromSongList(modifiedTracks, { type: "album", albumId: data.id, albumName: data.name }),
             indexInQueue: 0
         }))
     }
@@ -109,7 +117,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
                         <AppText style={styles.artistName}>{data?.artists?.[0]?.name}</AppText>
                     </Pressable>
                     <AppText style={styles.releaseDate}>{releaseDate}</AppText>
-                    {data?.tracks?.items?.map((song, i) => {
+                    {modifiedTracks?.map((song, i) => {
                         return (
                             <SongListItem
                                 key={i}
@@ -118,10 +126,10 @@ const AlbumScreen = (props: AlbumScreenProps) => {
                                 song={song}
                                 songContext={{
                                     type: "album",
-                                    albumId: data?.id,
-                                    albumName: data?.name
+                                    albumId: data?.id ?? "",
+                                    albumName: data?.name ?? ""
                                 }}
-                                allSongsInQueue={data.tracks.items}
+                                allSongsInQueue={modifiedTracks}
                                 styles={{
                                     textWrapper: {
                                         flexGrow: 1

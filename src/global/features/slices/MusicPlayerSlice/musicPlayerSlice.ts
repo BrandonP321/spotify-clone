@@ -59,7 +59,8 @@ const musicPlayerSlice = createSlice({
 			state.isPaused = true;
 		},
 		playNextSong: (state) => {
-			const nextSongIndex = (state.currentSongIndex === null) || (state.currentSongIndex ?? 0) >= (state.queue?.length ?? 0) ? 0 : state.currentSongIndex + 1;
+			console.log(state.currentSongIndex, state.queue?.length);
+			const nextSongIndex = (state.currentSongIndex === null) || state.currentSongIndex >= (state.queue?.length ?? 0) - 1 ? 0 : state.currentSongIndex + 1;
 			const nextSong = state.queue?.[nextSongIndex];
 
 			state.currentSongIndex = nextSongIndex;

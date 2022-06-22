@@ -169,7 +169,6 @@ export class SpotifyFetcher {
         const { limit } = params ?? {};
 
         const url = URLUtils.getUrlWithParams(`${APIFetcher.SpotifyAPIDomain}/me/playlists`, [{ param: "limit", value: limit?.toString() }])
-        console.log(url);
 
         return new Promise<SpotifyPlaylist[]>(async (resolve, reject) => {
             try {
