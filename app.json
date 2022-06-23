@@ -26,7 +26,8 @@
         "foregroundImage": "./assets/stores/google-play/app-icon.png",
         "backgroundColor": "#121212"
       },
-      "package": "com.brandonp321.spotifyclone"
+      "package": "com.brandonp321.spotifyclone",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
