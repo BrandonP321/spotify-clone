@@ -23,9 +23,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/stores/google-play/app-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.brandonp321.spotifyclone"
     },
     "web": {
       "favicon": "./assets/favicon.png"
