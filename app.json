@@ -24,7 +24,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/stores/google-play/app-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#121212"
       },
       "package": "com.brandonp321.spotifyclone"
     },
