@@ -5,7 +5,9 @@ import { ScreenUtils } from "../../utils/ScreenUtils";
 export default StyleSheet.create({
     header: {
         borderBottomColor: "rgba(0, 0, 0, 0.3)",
-        borderBottomWidth: 2
+        borderBottomWidth: 2,
+        paddingTop: ScreenUtils.statusBarHeight,
+        backgroundColor: uiBase.colors.appBg(1)
     },
     headerContent: {
         backgroundColor: uiBase.colors.appBg(1),

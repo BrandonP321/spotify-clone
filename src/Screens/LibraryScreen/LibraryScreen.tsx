@@ -31,7 +31,7 @@ export default function LibraryScreen({ navigation, route }: LibraryScreenProps)
     }, []);
 
     return (
-        <ScreenWrapper loading={!!playlists || !!albums || !!userData} stickyHeaderIndices={[0]} style={{ paddingTop: ScreenUtils.statusBarHeight }}>
+        <ScreenWrapper loading={!!playlists || !!albums || !!userData} stickyHeaderIndices={[0]} style={{ paddingTop: 0 }}>
             <View style={styles.header}>
                 <View style={styles.headerContent}>
                     <Image source={{ uri: userData?.images?.[0]?.url }} style={styles.headerImg} />
