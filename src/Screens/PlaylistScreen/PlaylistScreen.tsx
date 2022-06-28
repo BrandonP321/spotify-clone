@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react'
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, ListRenderItemInfo } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { useAppDispatch, useMusicPlayer } from '../../global/features/hooks';
 import { getQueueFromSongList, playSong } from '../../global/features/slices/MusicPlayerSlice/musicPlayerSlice';
@@ -10,7 +10,7 @@ import CoverImgScreenWrapper from '../../global/UI/Components/CoverImgScreen/Cov
 import { topContentHeight } from '../../global/UI/Components/CoverImgScreen/CoverImgScreenWrapper.style';
 import { PlayIconBtn } from '../../global/UI/Components/PlayBtn/PlayIconBtn';
 import { SongListItem } from '../../global/UI/Components/SongListItem/ImageListItem';
-import { SpotifyFetcher, SpotifyPlaylist, SpotifyUser } from '../../utils';
+import { SpotifyFetcher, SpotifyPlaylist, SpotifyTrack, SpotifyUser } from '../../utils';
 import styles from "./PlaylistScreen.style";
 
 type PlaylistScreenProps = ScreenProps<"Playlist">;
@@ -54,54 +54,38 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
         }))
     }
 
-    const PlayBtn = (props: { fixedIcon?: boolean; }) => (
-        <PlayIconBtn
-            onPress={handlePlayBtnPress}
-            style={styles.playBtn}
-            scrollOffset={scrollOffset}
-            isFixedInstance={props.fixedIcon}
-            top={topContentHeight + albumTitleHeight}
-            pauseOnClick={player.currentSong?.context?.type === "playlist" && player.currentSong?.context?.playlistId === data?.id}
-        />
-    )
-
     const numbFollowers = data?.followers?.total ?? 0;
 
     return (
         <>
-            <PlayBtn fixedIcon />
+            <PlayIconBtn
+                onPress={handlePlayBtnPress}
+                style={styles.playBtn}
+                scrollOffset={scrollOffset}
+                top={topContentHeight + albumTitleHeight}
+                pauseOnClick={player.currentSong?.context?.type === "playlist" && player.currentSong?.context?.playlistId === data?.id}
+            />
 
             <CoverImgScreenWrapper
                 scrollOffset={scrollOffset}
                 headerTitle={data?.name}
                 coverImg={data?.images?.[0]?.url}
                 loading={!data ?? !owner}
-            >
-                <PlayBtn />
-
-                <View>
-                    <AppHeading ref={playlistTitleEle} style={styles.title}>{data?.name}</AppHeading>
-
-                    <View style={styles.userWrapper}>
-                        <Image source={{ uri: owner?.images?.[0]?.url }} style={styles.userImg} />
-                        <AppText style={styles.userName}>{owner?.display_name}</AppText>
-                    </View>
-
-                    <AppText style={styles.followers}>{`${numbFollowers} ${numbFollowers === 1 ? "follower" : "followers"}`}</AppText>
-
-                    {data?.tracks?.items?.map(({ track }, i) => {
-                        return (
-                            <SongListItem
-                                key={i}
+                data={data?.tracks?.items?.map(item => item.track) ?? []}
+                renderItem={({ item: track, index }: ListRenderItemInfo<SpotifyTrack>) => {
+                    console.log(track);
+                    return (
+                        <SongListItem
+                                key={index}
                                 title={track?.name}
                                 subtitle={track.artists?.map(a => a.name)?.join(", ")}
                                 song={track}
                                 songContext={{
                                     type: "playlist",
-                                    playlistId: data?.id,
-                                    playlistName: data?.name
+                                    playlistId: data?.id ?? "",
+                                    playlistName: data?.name ?? ""
                                 }}
-                                allSongsInQueue={data.tracks.items?.map(item => item.track)}
+                                allSongsInQueue={data?.tracks.items?.map(item => item.track) ?? []}
                                 image={track.album?.images?.[0]?.url}
                                 styles={{
                                     textWrapper: {
@@ -109,11 +93,21 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
                                     }
                                 }}
                             />
-                        )
-                    })}
-                </View>
+                    )
+                }}
+                headerComponent={(
+                    <>
+                        <AppHeading ref={playlistTitleEle} style={styles.title}>{data?.name}</AppHeading>
 
-            </CoverImgScreenWrapper>
+                        <View style={styles.userWrapper}>
+                            <Image source={{ uri: owner?.images?.[0]?.url }} style={styles.userImg} />
+                            <AppText style={styles.userName}>{owner?.display_name}</AppText>
+                        </View>
+
+                        <AppText style={styles.followers}>{`${numbFollowers} ${numbFollowers === 1 ? "follower" : "followers"}`}</AppText>
+                    </>
+                )}
+            />
         </>
     )
 }

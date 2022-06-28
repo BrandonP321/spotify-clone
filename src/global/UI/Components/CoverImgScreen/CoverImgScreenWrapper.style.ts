@@ -11,8 +11,12 @@ export default StyleSheet.create({
         paddingTop: 0,
     },
     headerWrapper: {
-        height: 0.5,
         overflow: "visible",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 10
     },
     topContentWrapper: {
         height: topContentHeight,

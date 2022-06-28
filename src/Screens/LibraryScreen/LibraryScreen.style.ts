@@ -7,7 +7,12 @@ export default StyleSheet.create({
         borderBottomColor: "rgba(0, 0, 0, 0.3)",
         borderBottomWidth: 2,
         paddingTop: ScreenUtils.statusBarHeight,
-        backgroundColor: uiBase.colors.appBg(1)
+        backgroundColor: uiBase.colors.appBg(1),
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 10
     },
     headerContent: {
         backgroundColor: uiBase.colors.appBg(1),

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, View, Image } from 'react-native';
+import { Pressable, View, Image, ListRenderItemInfo } from 'react-native';
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper';
 import { ScreenProps } from '../../global/Navigation/Screens';
 import { AppHeading, AppText } from '../../global/UI/Components/AppText/AppText';
@@ -30,72 +30,61 @@ export default function LibraryScreen({ navigation, route }: LibraryScreenProps)
         SpotifyFetcher.getSavedAlbums().then(setAlbums);
     }, []);
 
+    const handlePlaylistPress = (playlistId: string) => {
+        navigation.navigate("Playlist", { playlistId: playlistId })
+    }
+
     return (
-        <ScreenWrapper loading={!!playlists || !!albums || !!userData} stickyHeaderIndices={[0]} style={{ paddingTop: 0 }}>
+        <>
             <View style={styles.header}>
                 <View style={styles.headerContent}>
                     <Image source={{ uri: userData?.images?.[0]?.url }} style={styles.headerImg} />
                     <AppHeading style={styles.headerTitle}>Your Library</AppHeading>
                 </View>
             </View>
+            <ScreenWrapper
+                loading={!playlists || !albums || !userData} stickyHeaderIndices={[0]}
+                style={{ paddingTop: ScreenUtils.statusBarHeight + 80 }}
+                data={(selectedTab === "albums" ? albums : playlists) ?? []}
+                renderItem={({ index, item, separators }: ListRenderItemInfo<SpotifyAlbum | SpotifyPlaylist>) => {
 
-            <View style={styles.tabs}>
-                {tabs?.map((t, i) => {
-                    const isSelected = selectedTab === t.tab;
+                    const commonData = {
+                        title: item?.name,
+                        image: item?.images?.[0]?.url,
+                        styles: {
+                            img: { width: 70, height: 70 }
+                        }
+                    }
 
-                    return (
-                        <Pressable
-                            key={i}
-                            style={[styles.tab, {
-                                borderColor: isSelected ? uiBase.colors.lime(1) : uiBase.colors.textSecondary,
-                                backgroundColor: isSelected ? uiBase.colors.lime(0.7) : "transparent",
-                            }]}
-                            onPress={() => setSelectedTab(t.tab)}
-                        >
-                            <AppText style={styles.tabText}>{t.title}</AppText>
-                        </Pressable>
-                    )
-                })}
-            </View>
-
-            {/* PLAYLISTS */}
-            <View style={selectedTab !== "playlists" && { height: 0, overflow: "hidden" }}>
-                {playlists?.map((p, i) => {
-                    const totalTracks = p.tracks?.total;
-
-                    return (
-                        <ImageListItem
-                            key={i}
-                            title={p.name}
-                            subtitle={`${totalTracks} ${totalTracks === 1 ? "song" : "songs"}`}
-                            image={p.images?.[0]?.url || "blank"}
-                            onPress={() => navigation.navigate("Playlist", { playlistId: p.id })}
-                            styles={{
-                                img: { width: 70, height: 70 }
-                            }}
+                    return item?.type === "album"
+                        ? <AlbumListItem {...commonData} albumId={item?.id} subtitle={item?.artists?.map(a => a.name)?.join(", ")} />
+                        : <ImageListItem {...commonData}
+                            onPress={() => handlePlaylistPress(item?.id)}
+                            subtitle={`${item.tracks?.items?.length} ${item.tracks?.items?.length === 1 ? "song" : "songs"}`}
                         />
-                    )
-                })}
-            </View>
+                }}
+                headerComponent={() => (
+                    <View style={styles.tabs}>
+                        {tabs?.map((t, i) => {
+                            const isSelected = selectedTab === t.tab;
 
-            {/* ALBUMS */}
-            <View style={selectedTab !== "albums" && { height: 0, overflow: "hidden" }}>
-                {albums?.map((a, i) => {
-
-                    return (
-                        <AlbumListItem
-                            key={i}
-                            title={a?.name}
-                            subtitle={a?.artists.map(artist => artist.name).join(", ")}
-                            image={a?.images?.[0]?.url}
-                            albumId={a?.id}
-                            styles={{
-                                img: { width: 70, height: 70 }
-                            }}
-                        />
-                    )
-                })}
-            </View>
-        </ScreenWrapper>
+                            return (
+                                <Pressable
+                                    key={i}
+                                    style={[styles.tab, {
+                                        borderColor: isSelected ? uiBase.colors.lime(1) : uiBase.colors.textSecondary,
+                                        backgroundColor: isSelected ? uiBase.colors.lime(0.7) : "transparent",
+                                    }]}
+                                    onPress={() => setSelectedTab(t.tab)}
+                                >
+                                    <AppText style={styles.tabText}>{t.title}</AppText>
+                                </Pressable>
+                            )
+                        })}
+                    </View>
+                )}
+            >
+            </ScreenWrapper>
+        </>
     )
 }

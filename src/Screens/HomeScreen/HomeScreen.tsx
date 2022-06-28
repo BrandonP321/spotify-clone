@@ -25,8 +25,6 @@ export default function HomeScreen(props: HomeScreenProps) {
       SpotifyFetcher.getRecentTracks({ limit: 10 }).then(setRecentTracks);
       SpotifyFetcher.getSavedAlbums({ limit: 10 }).then(setSavedAlbums);
       SpotifyFetcher.getFeaturedPlaylists({ limit: 10 }).then(setFeaturedPlaylists)
-    }).catch(err => {
-      console.log("err", err);
     })
   }, []);
 
@@ -37,7 +35,7 @@ export default function HomeScreen(props: HomeScreenProps) {
         SplashScreen.hideAsync();
       }, 200)
     }
-  }, [userPlaylists, favoriteArtists])
+  }, [userPlaylists, favoriteArtists]);
 
   return (
     <ScreenWrapper>

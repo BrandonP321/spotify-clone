@@ -71,14 +71,18 @@ export default StyleSheet.create({
         ...topAbsolutePosition,
     },
     playBtn: {
-
+        
     },
     content: {
         zIndex: 9
     },
     headerWrapper: {
-        height: 0.5,
         overflow: "visible",
+        zIndex: 10,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0
     },
     heading: {
         marginTop: 50,

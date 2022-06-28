@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useEffect, useState } from "react"
-import { Image, ImageStyle, Pressable, StyleProp, Text, View } from "react-native"
+import { Image, ImageStyle, ListRenderItemInfo, Pressable, StyleProp, Text, View } from "react-native"
 import Animated, { interpolate, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import ScreenWrapper from "../../global/Components/ScreenWrapper/ScreenWrapper";
 import { useAppDispatch, useMusicPlayer } from "../../global/features/hooks";
@@ -30,7 +30,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     const navigation = useAppNavigation();
 
     const scrollOffset = useSharedValue(0);
-    
+
     const [data, setData] = useState<SpotifyAlbum | null>(null);
     const [otherAlbums, setOtherAlbums] = useState<SpotifyAlbum[] | null>(null);
     const [allArtists, setAllArtists] = useState<SpotifyArtist[] | null>(null);
@@ -86,59 +86,55 @@ const AlbumScreen = (props: AlbumScreenProps) => {
         }))
     }
 
-    const PlayBtn = (props: { fixedIcon?: boolean; }) => (
-        <PlayIconBtn
-            onPress={handlePlayBtnPress}
-            style={styles.playBtn}
-            scrollOffset={scrollOffset}
-            isFixedInstance={props.fixedIcon}
-            top={topContentHeight + albumTitleHeight}
-            pauseOnClick={player.currentSong?.context?.type === "album" && player.currentSong?.context?.albumId === data?.id}
-        />
-    )
-
     return (
         <>
-            <PlayBtn fixedIcon />
+            <PlayIconBtn
+                onPress={handlePlayBtnPress}
+                style={styles.playBtn}
+                scrollOffset={scrollOffset}
+                top={topContentHeight + albumTitleHeight}
+                pauseOnClick={player.currentSong?.context?.type === "album" && player.currentSong?.context?.albumId === data?.id}
+            />
 
             <CoverImgScreenWrapper
                 headerTitle={data?.name}
                 coverImg={data?.images?.[0]?.url}
                 loading={!data ?? !allArtists ?? !otherAlbums}
                 scrollOffset={scrollOffset}
+                data={modifiedTracks ?? []}
+                renderItem={({ item: song, index }: ListRenderItemInfo<Exclude<typeof modifiedTracks, undefined>[number]>) => {
+                    return (
+                        <SongListItem
+                            key={index}
+                            title={song.name}
+                            subtitle={song.artists?.map(a => a.name)?.join(", ")}
+                            song={song}
+                            songContext={{
+                                type: "album",
+                                albumId: data?.id ?? "",
+                                albumName: data?.name ?? ""
+                            }}
+                            allSongsInQueue={modifiedTracks ?? []}
+                            styles={{
+                                textWrapper: {
+                                    flexGrow: 1
+                                }
+                            }}
+                        />
+                    )
+                }}
+                headerComponent={(
+                    <>
+                        <AppHeading ref={albumTitleEle} style={styles.title}>{data?.name}</AppHeading>
+                        <Pressable style={styles.artistWrapper} onPress={goToArtist}>
+                            <Image source={{ uri: allArtists?.[0]?.images?.[0]?.url }} style={styles.artistImg} />
+                            <AppText style={styles.artistName}>{data?.artists?.[0]?.name}</AppText>
+                        </Pressable>
+                        <AppText style={styles.releaseDate}>{releaseDate}</AppText>
+                    </>
+                )}
             >
-
-                <PlayBtn />
-
                 <View>
-                    <AppHeading ref={albumTitleEle} style={styles.title}>{data?.name}</AppHeading>
-                    <Pressable style={styles.artistWrapper} onPress={goToArtist}>
-                        <Image source={{ uri: allArtists?.[0]?.images?.[0]?.url }} style={styles.artistImg} />
-                        <AppText style={styles.artistName}>{data?.artists?.[0]?.name}</AppText>
-                    </Pressable>
-                    <AppText style={styles.releaseDate}>{releaseDate}</AppText>
-                    {modifiedTracks?.map((song, i) => {
-                        return (
-                            <SongListItem
-                                key={i}
-                                title={song.name}
-                                subtitle={song.artists?.map(a => a.name)?.join(", ")}
-                                song={song}
-                                songContext={{
-                                    type: "album",
-                                    albumId: data?.id ?? "",
-                                    albumName: data?.name ?? ""
-                                }}
-                                allSongsInQueue={modifiedTracks}
-                                styles={{
-                                    textWrapper: {
-                                        flexGrow: 1
-                                    }
-                                }}
-                            />
-                        )
-                    })}
-
                     {allArtists?.map((artist, i) => {
 
                         return (

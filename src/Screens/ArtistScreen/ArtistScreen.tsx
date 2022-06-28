@@ -65,24 +65,28 @@ export default function ArtistScreen(props: ArtistScreenProps) {
 
     const scrollOffset = useSharedValue(0);
 
-    const PlayBtn = (props: { fixedIcon?: boolean; }) => (
-        <PlayIconBtn 
-            onPress={handlePlayBtnPress} 
-            style={styles.playBtn} 
-            scrollOffset={scrollOffset} 
-            isFixedInstance={props.fixedIcon} 
-            top={playIconPositionTop}
-            pauseOnClick={player.currentSong?.context?.type === "artist" && player.currentSong?.context?.artistId === data?.id}
-        />
-    )
-
     const handleScroll = useAnimatedScrollHandler((e) => {
         scrollOffset.value = e?.contentOffset.y;
     })
 
     return (
         <>
-            <PlayBtn fixedIcon/>
+            <View style={styles.headerWrapper}>
+                <SimpleHeader
+                    title={data?.name}
+                    scrollOffset={scrollOffset}
+                    bgOpacityInterpolationInput={[artistImgWrapperHeight / 4, artistImgWrapperHeight / 2]}
+                    titleOpacityInterpolationInput={[artistImgWrapperHeight / 2 + 25, artistImgWrapperHeight]}
+                />
+            </View>
+
+            <PlayIconBtn
+                onPress={handlePlayBtnPress}
+                style={styles.playBtn}
+                scrollOffset={scrollOffset}
+                top={playIconPositionTop}
+                pauseOnClick={player.currentSong?.context?.type === "artist" && player.currentSong?.context?.artistId === data?.id}
+            />
 
             <ScreenWrapper
                 style={styles.artistScreen}
@@ -90,21 +94,12 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                 stickyHeaderIndices={[0]}
                 loading={!!(!data ?? !albums ?? !topTracks ?? !relatedArtists)}
             >
-                <View style={styles.headerWrapper}>
-                    <SimpleHeader 
-                        title={data?.name} 
-                        scrollOffset={scrollOffset}
-                        bgOpacityInterpolationInput={[artistImgWrapperHeight / 4, artistImgWrapperHeight / 2]}
-                        titleOpacityInterpolationInput={[artistImgWrapperHeight / 2 + 25, artistImgWrapperHeight]}
-                    />
-                </View>
-
                 <View style={styles.fixedImgWrapper}>
                     <ImageBackground source={{ uri: data?.images?.[0]?.url }} style={styles.artistImg} />
                     <View style={styles.artistImgOverlay} />
                 </View>
 
-                <PlayBtn />
+                {/* <PlayBtn /> */}
 
                 <View style={styles.content}>
                     <View style={styles.titleBoxOuterWrapper}>

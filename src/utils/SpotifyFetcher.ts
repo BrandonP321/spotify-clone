@@ -65,6 +65,7 @@ export type SpotifyPlaylist = BasicSpotifyResponseProps & {
     owner: { id: string; };
     public: boolean;
     followers: { total: number };
+    type: "playlist";
     tracks: {
         total: number;
         items: { track: SpotifyTrack }[];
