@@ -1,9 +1,12 @@
 import { useNavigation, CommonActions, StackActions } from '@react-navigation/native';
 import React, { useState } from 'react'
-import { Image, ImageStyle, Pressable, Text, TextStyle, View, ViewStyle } from 'react-native';
-import { SpotifyAlbum, SpotifyArtist, SpotifyPlaylist } from '../../../../utils';
+import { Image, ImageStyle, Pressable, StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { SpotifyAlbum, SpotifyArtist, SpotifyPlaylist, SpotifyTrack } from '../../../../utils';
 import { NavigationHelper, useAppNavigation } from '../../../../utils/NavigationHelper';
+import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
+import { getQueueFromSongList, playSong } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { RootStackParamList } from '../../../Navigation/Screens';
+import { uiBase } from '../../styles/uiBase.style';
 import { AppHeading, AppText } from '../AppText/AppText';
 import styles from "./ActionCard.style";
 
@@ -13,9 +16,9 @@ type ActionCardProps = {
     img?: string;
     customStyles?: {
         cardWrapper?: ViewStyle;
-        img?: ImageStyle;
-        title?: TextStyle;
-        blurb?: TextStyle;
+        img?: StyleProp<ImageStyle>;
+        title?: StyleProp<TextStyle>;
+        blurb?: StyleProp<TextStyle>;
     };
     onPress?: () => void;
     withoutRightMargin?: boolean;
@@ -120,6 +123,40 @@ export const PlaylistActionCard = (props: PlaylistActionCardProps) => {
             customStyles={{ ...customStyles, title: styles.albumCardTitle }}
             title={playlistData?.name}
             img={playlistData?.images?.[0]?.url}
+        />
+    )
+}
+
+type SongActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRightMargin"> & {
+    songData: SpotifyTrack;
+    songsForQueue: SpotifyTrack[];
+}
+
+export const SongActionCard = (props: SongActionCardProps) => {
+    const { customStyles, songData, songsForQueue, ...rest } = props;
+
+    const player = useMusicPlayer();
+    const dispatch = useAppDispatch();
+
+    const queue = getQueueFromSongList(songsForQueue, { type: "none" });
+    const indexInQueue = queue.findIndex(s => s.id === songData?.id);
+
+    const handlePress = () => {
+        dispatch(playSong({ queue, indexInQueue }));
+    }
+
+    return (
+        <ActionCard
+            {...rest}
+            onPress={handlePress}
+            customStyles={{ 
+                ...customStyles, 
+                title: [{ color: player.currentSong?.id === songData?.id ? uiBase.colors.lime(1) : uiBase.colors.textPrimary }],
+                img: { width: 130, height: 130 },
+                cardWrapper: { width: 130 }
+            }}
+            title={songData?.name}
+            img={songData?.album?.images?.[0]?.url}
         />
     )
 }

@@ -206,6 +206,40 @@ export class SpotifyFetcher {
         })
     }
 
+    public static getRecentTracks = (params?: { limit?: number }) => {
+        const { limit } = params ?? {};
+
+        const url = URLUtils.getUrlWithParams(`${APIFetcher.SpotifyAPIDomain}/me/player/recently-played`, [{ param: "limit", value: limit?.toString() }])
+
+        return new Promise<SpotifyTrack[]>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyItemsResponse<{ track: SpotifyTrack }>>(url);
+
+                resolve(res.items?.map(item => item.track));
+            } catch (err: any) {
+
+                reject(err);
+            }
+        })
+    }
+
+    public static getFeaturedPlaylists = (params?: { limit?: number }) => {
+        const { limit } = params ?? {};
+
+        const url = URLUtils.getUrlWithParams(`${APIFetcher.SpotifyAPIDomain}/browse/featured-playlists`, [{ param: "limit", value: limit?.toString() }])
+
+        return new Promise<SpotifyPlaylist[]>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<{ playlists: SpotifyItemsResponse<SpotifyPlaylist> }>(url);
+
+                resolve(res.playlists?.items);
+            } catch (err: any) {
+
+                reject(err);
+            }
+        })
+    }
+
     public static getPlaylistCoverImg = (playlistId: string) => {
         return new Promise<SpotifyImg[]>(async (resolve, reject) => {
             try {
