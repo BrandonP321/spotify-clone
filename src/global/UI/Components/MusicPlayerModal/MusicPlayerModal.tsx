@@ -287,7 +287,7 @@ const PlayerModalHeader = (props: PlayerModalHeaderProps) => {
                 <DownChevron fill={uiBase.colors.textPrimary} style={styles.backArrow}/>
             </Pressable>
 
-            <Pressable style={styles.headerTextWrapper}>
+            <Pressable style={[styles.headerTextWrapper, !songData?.songSource && { display: "none" }]}>
                 <AppText style={styles.headerSubtitle} numberOfLines={1} onPress={handleTitlePress}>{subtitle}</AppText>
                 <AppHeading style={styles.headerTitle} numberOfLines={1} onPress={handleTitlePress}>{songData?.name}</AppHeading>
             </Pressable>

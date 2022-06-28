@@ -115,10 +115,11 @@ export const AlbumListItem = function(props: AlbumListItemProps) {
 
     const albumStyles: ImageListItemProps["styles"] = {
         ...s,
-        img: {
+        img: [{
             width: 75,
             height: 75,
-        }
+
+        }, s?.img]
     }
 
     return (

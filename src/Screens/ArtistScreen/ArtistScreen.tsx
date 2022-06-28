@@ -150,7 +150,7 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                             return (
                                 <SongListItem
                                     key={i}
-                                    title={track.name}
+                                    title={track?.name}
                                     subtitle={track?.artists?.map(a => a?.name)?.join(", ")}
                                     image={track.album?.images?.[0]?.url}
                                     song={track}

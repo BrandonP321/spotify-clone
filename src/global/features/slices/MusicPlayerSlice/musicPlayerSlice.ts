@@ -13,9 +13,11 @@ export type SongContext = {
 	type: "playlist";
 	playlistId: string;
 	playlistName: string;
+} | {
+	type: "none"
 }
 
-type SongItem = {
+export type SongItem = {
 	id: string;
 	albumImg: string;
 	title: string;

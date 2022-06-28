@@ -66,12 +66,20 @@ export type SpotifyPlaylist = BasicSpotifyResponseProps & {
     public: boolean;
     followers: { total: number };
     tracks: {
+        total: number;
         items: { track: SpotifyTrack }[];
         /* url to next page of items */
         next: string | null;
         /* url to prev page of items */
         previous: string | null;
     };
+}
+
+export type SpotifySearchResponse = {
+    tracks: SpotifyItemsResponse<SpotifyTrack>;
+    artists: SpotifyItemsResponse<SpotifyArtist>;
+    albums: SpotifyItemsResponse<SpotifyAlbum>;
+    playlists: SpotifyItemsResponse<SpotifyPlaylist>;
 }
 
 export type SpotifyUser = Omit<BasicSpotifyResponseProps, "name"> & {
@@ -209,6 +217,18 @@ export class SpotifyFetcher {
         return new Promise<SpotifyUser>(async (resolve, reject) => {
             try {
                 const res = await APIFetcher.get<SpotifyUser>(`${APIFetcher.SpotifyAPIDomain}/users/${userId}`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static search = (query: string) => {
+        return new Promise<SpotifySearchResponse>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifySearchResponse>(`${APIFetcher.SpotifyAPIDomain}/search?query=${query}&type=album,playlist,track,artist`);
 
                 resolve(res);
             } catch (err) {

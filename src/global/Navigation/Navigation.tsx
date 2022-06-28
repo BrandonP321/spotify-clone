@@ -17,6 +17,7 @@ import SearchActiveIcon from "../../../assets/tabIcons/magnifying-glass-solid.sv
 import SearchInactiveIcon from "../../../assets/tabIcons/magnifying-glass-light.svg";
 import LibraryActiveIcon from "../../../assets/tabIcons/books-solid.svg";
 import LibraryInactiveIcon from "../../../assets/tabIcons/books-light.svg";
+import SearchScreen from '../../Screens/SearchScreen/SearchScreen';
 
 export default function Navigation() {
 
@@ -93,7 +94,7 @@ const TabNavigator = () => {
       <Tab.Screen name={"Artist"} component={ArtistScreen} options={{ tabBarButton: () => null }}/>
       <Tab.Screen name={"Album"} component={AlbumScreen} options={{ tabBarButton: () => null }}/>
       <Tab.Screen name={"Playlist"} component={PlaylistScreen} options={{ tabBarButton: () => null }}/>
-      <Tab.Screen name={"Search"} component={View} options={({route}) => ({
+      <Tab.Screen name={"Search"} component={SearchScreen} options={({route}) => ({
         tabBarIcon: ({ color, focused, size }) => focused ? <SearchActiveIcon {...activeIconProps}/> : <SearchInactiveIcon {...inactiveIconProps}/>
       })}/>
       <Tab.Screen name={"Library"} component={View} options={({route}) => ({

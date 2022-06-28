@@ -11,6 +11,9 @@ export type RootStackParamList = {
     };
     Playlist: {
         playlistId: string;
+    };
+    Search: {
+        
     }
 }
 

@@ -26,6 +26,7 @@
         "foregroundImage": "./assets/stores/google-play/app-icon.png",
         "backgroundColor": "#121212"
       },
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.brandonp321.spotifyclone",
       "versionCode": 2
     },

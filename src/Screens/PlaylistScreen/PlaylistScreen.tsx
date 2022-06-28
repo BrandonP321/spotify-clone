@@ -93,7 +93,7 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
                         return (
                             <SongListItem
                                 key={i}
-                                title={track.name}
+                                title={track?.name}
                                 subtitle={track.artists?.map(a => a.name)?.join(", ")}
                                 song={track}
                                 songContext={{

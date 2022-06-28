@@ -6,20 +6,15 @@ import { ScreenProps } from '../../global/Navigation/Screens'
 import { uiBase } from '../../global/UI/styles/uiBase.style';
 import { AuthUtils } from '../../utils';
 
-type AuthLoadingScreenProps = ScreenProps<"AuthLoading">;
+type AuthLoadingScreenProps = {}
 
 export default function AuthLoadingScreen(props: AuthLoadingScreenProps) {
     useEffect(() => {
-        // TODO: remove this code when done testing auth flow
-        // deleteItemAsync("accessToken").then(() => deleteItemAsync("refreshToken").then(() => {
             AuthUtils.validateUserAuth().then(res => {
-                // navigate to home page
-                console.log("navigate to home")
-                props.navigation.navigate("Home", {});
+
             }).catch(err => {
                 console.log("err", err);
             })
-        // }))
     }, [])
 
     return (
