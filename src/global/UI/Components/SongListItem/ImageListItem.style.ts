@@ -7,8 +7,8 @@ const trackImgHeight = trackImgWidth;
 export const imgMarginRight = 10;
 const moreIconWidth = 6;
 const moreIconWrapperWidth = moreIconWidth + (uiBase.padding.appHorizontalPadding * 2);
-const trackNumberWidth = uiBase.padding.appHorizontalPadding * 3;
-const textWrapperWidth = ScreenUtils.vw - (trackNumberWidth + trackImgWidth + imgMarginRight + moreIconWrapperWidth);
+export const trackNumberWidth = uiBase.padding.appHorizontalPadding * 3;
+export const textWrapperWidth = ScreenUtils.vw - (trackNumberWidth + trackImgWidth + imgMarginRight + moreIconWrapperWidth);
 
 export default StyleSheet.create({
     listItem: {

@@ -8,6 +8,7 @@ import { ScreenProps } from '../../global/Navigation/Screens'
 import { AppText } from '../../global/UI/Components/AppText/AppText';
 import LoadingContainer from '../../global/UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
 import ImageListItem, { AlbumListItem, ArtistListItem, SongListItem } from '../../global/UI/Components/SongListItem/ImageListItem';
+import { textWrapperWidth, trackNumberWidth } from '../../global/UI/Components/SongListItem/ImageListItem.style';
 import { uiBase } from '../../global/UI/styles/uiBase.style';
 import { SpotifyFetcher, SpotifySearchResponse } from '../../utils';
 import { ScreenUtils } from '../../utils/ScreenUtils';
@@ -88,7 +89,9 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                                 title={t.name}
                                 image={t.album?.images?.[0]?.url}
                                 subtitle={t.artists?.map(a => a.name)?.join(", ")}
-
+                                styles={{ textWrapper: {
+                                    width: textWrapperWidth + trackNumberWidth - uiBase.padding.appHorizontalPadding
+                                } }}
                             />
                         )
                     })}
