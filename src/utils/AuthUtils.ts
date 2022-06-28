@@ -39,7 +39,7 @@ export class AuthUtils {
     }
 
     public static openAuthWindow = async () => {
-        const scope = "user-read-private%20user-read-email%20user-top-read";
+        const scope = "user-read-private%20user-read-email%20user-top-read%20playlist-read-private%20user-read-recently-played%20user-library-read";
         const clientId = "13786cced89e4dba9de0f15126c86c1f";
         const redirectURI = Linking.createURL("");  
         

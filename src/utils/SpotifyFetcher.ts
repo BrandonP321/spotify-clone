@@ -189,6 +189,23 @@ export class SpotifyFetcher {
         })
     }
 
+    public static getSavedAlbums = (params?: { limit?: number }) => {
+        const { limit } = params ?? {};
+
+        const url = URLUtils.getUrlWithParams(`${APIFetcher.SpotifyAPIDomain}/me/albums`, [{ param: "limit", value: limit?.toString() }])
+
+        return new Promise<SpotifyAlbum[]>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyItemsResponse<{ album: SpotifyAlbum }>>(url);
+
+                resolve(res.items?.map(item => item.album));
+            } catch (err: any) {
+
+                reject(err);
+            }
+        })
+    }
+
     public static getPlaylistCoverImg = (playlistId: string) => {
         return new Promise<SpotifyImg[]>(async (resolve, reject) => {
             try {
@@ -217,6 +234,18 @@ export class SpotifyFetcher {
         return new Promise<SpotifyUser>(async (resolve, reject) => {
             try {
                 const res = await APIFetcher.get<SpotifyUser>(`${APIFetcher.SpotifyAPIDomain}/users/${userId}`);
+
+                resolve(res);
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
+
+    public static getCurrentUser = () => {
+        return new Promise<SpotifyUser>(async (resolve, reject) => {
+            try {
+                const res = await APIFetcher.get<SpotifyUser>(`${APIFetcher.SpotifyAPIDomain}/me`);
 
                 resolve(res);
             } catch (err) {

@@ -12,9 +12,8 @@ export type RootStackParamList = {
     Playlist: {
         playlistId: string;
     };
-    Search: {
-        
-    }
+    Search: {};
+    Library: {};
 }
 
 export type ValidScreenName = keyof RootStackParamList;
