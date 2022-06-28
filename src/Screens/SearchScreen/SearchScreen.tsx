@@ -54,7 +54,6 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
         if (query) {
             SpotifyFetcher.search(query).then(setData);
             setData(null);
-            setIsSearchBarFocused(false);
         }
     }
 
@@ -70,7 +69,10 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                         const isSelected = selectedTab === t.tab;
 
                         return (
-                            <Pressable key={i} style={[styles.tab, isSelected && { borderColor: uiBase.colors.textPrimary }]} onPress={() => setSelectedTab(t.tab)}>
+                            <Pressable key={i} style={[styles.tab, {
+                                borderColor: isSelected ? uiBase.colors.lime(1) : uiBase.colors.textSecondary,
+                                backgroundColor: isSelected ? uiBase.colors.lime(0.7) : "transparent",
+                            }]} onPress={() => setSelectedTab(t.tab)}>
                                 <AppText style={styles.tabText}>{t.title}</AppText>
                             </Pressable>
                         )
