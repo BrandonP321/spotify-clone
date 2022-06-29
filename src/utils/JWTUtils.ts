@@ -24,7 +24,6 @@ export class JWTUTils {
 
     /* Stores both access and refresh token */
     public static storeBothTokens = async (accessToken: string, refreshToken: string) => {
-        console.log("tokens: ", accessToken, refreshToken);
         await this.storeAccessToken(accessToken);
         await this.storeRefreshToken(refreshToken);
     }

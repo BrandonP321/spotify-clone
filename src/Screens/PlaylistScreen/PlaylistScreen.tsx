@@ -73,7 +73,6 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
                 loading={!data ?? !owner}
                 data={data?.tracks?.items?.map(item => item.track) ?? []}
                 renderItem={({ item: track, index }: ListRenderItemInfo<SpotifyTrack>) => {
-                    console.log(track);
                     return (
                         <SongListItem
                                 key={index}

@@ -20,7 +20,6 @@ export class StorageUtils {
                 
                 resolve(true);
             } catch(err) {
-                console.log(err);
                 reject(false)
             }
         })
@@ -38,7 +37,6 @@ export class StorageUtils {
             const parsedItem = parseItem && item ? JSON.parse(item) : item;
             return parsedItem;
         } catch(err) {
-            console.log("storage err")
             return undefined;
         }
     }

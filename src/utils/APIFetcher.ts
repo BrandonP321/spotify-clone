@@ -22,11 +22,8 @@ export class APIFetcher {
                 if (status === 401) {
                     // make request to refresh token
                     try {
-                        console.log("refresh token")
                         const newToken = await SpotifyFetcher.getRefreshedToken();
-                        console.log(newToken);
                         if (!newToken) {
-                            console.log("no new token");
                             return reject(err);
                         }
     
@@ -35,10 +32,8 @@ export class APIFetcher {
                         await JWTUTils.storeAccessToken(accessToken);
 
                         // make axios request again now that token is refreshed
-                        console.log("re make request")
                         return axios.get<T>(url, config);
                     } catch (err) {
-                        console.log("couldn't get new tokens")
                         return reject(err);
                     }
                 }
@@ -63,7 +58,6 @@ export class APIFetcher {
                         const newTokens = await SpotifyFetcher.getRefreshedToken();
 
                         // assuming token refresh was successful, store new Tokens;
-                        console.log(newTokens);
 
                     } catch (err) {
                         return reject(err);

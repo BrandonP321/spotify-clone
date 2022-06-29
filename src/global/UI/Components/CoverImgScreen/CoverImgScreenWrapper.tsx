@@ -82,8 +82,6 @@ const AnimatedCoverImg = (props: AnimatedCoverImgProps) => {
     ]
   }))
 
-  console.log(1 / (coverImgHeight - heightInterpolationInput[1]))
-
   return (
     <Animated.Image source={{ uri: img }} style={[styles.coverImg, style, animStyles]} />
   )
