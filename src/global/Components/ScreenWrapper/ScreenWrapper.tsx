@@ -39,7 +39,7 @@ export default function ScreenWrapper(props: ScreenWrapperProps) {
                 bounces={false} 
                 overScrollMode={"never"} 
                 onScroll={props.onScroll} 
-                scrollEventThrottle={90}
+                scrollEventThrottle={16}
                 data={props.data}
                 renderItem={props.renderItem}
                 ListHeaderComponent={props.headerComponent}

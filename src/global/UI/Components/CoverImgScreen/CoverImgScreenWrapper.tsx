@@ -56,19 +56,6 @@ export default function CoverImgScreenWrapper(props: CoverImgScreenWrapperProps)
           {headerComponent}
         </>
       )}>
-
-      {/* <LinearGradient colors={[gradientColor(0.25, 1), uiBase.colors.appBg(0)]} style={styles.topContentGradient} />
-
-      <View style={styles.topContentWrapper}>
-        <AnimatedCoverImg
-          img={coverImg}
-          scrollOffset={scrollOffset}
-          heightInterpolationInput={[0, topContentHeight / 3]}
-          opacityInterpolationInput={[topContentHeight / 3, topContentHeight / 4 * 2.5]}
-          yTransformInterpolationInput={[topContentHeight / 3, topContentHeight / 4 * 2.5]}
-        />
-      </View> */}
-
       {children}
     </ScreenWrapper>
     </>
@@ -90,8 +77,12 @@ const AnimatedCoverImg = (props: AnimatedCoverImgProps) => {
   const animStyles = useAnimatedStyle(() => ({
     height: interpolate(scrollOffset.value, heightInterpolationInput, [coverImgHeight, coverImgHeight - heightInterpolationInput[1]], "clamp"),
     opacity: interpolate(scrollOffset.value, opacityInterpolationInput, [1, 0], "clamp"),
-    transform: [{ translateY: interpolate(scrollOffset.value, yTransformInterpolationInput, [0, 40], "clamp") }]
+    transform: [
+      { translateY: interpolate(scrollOffset.value, yTransformInterpolationInput, [0, 40], "clamp") },
+    ]
   }))
+
+  console.log(1 / (coverImgHeight - heightInterpolationInput[1]))
 
   return (
     <Animated.Image source={{ uri: img }} style={[styles.coverImg, style, animStyles]} />

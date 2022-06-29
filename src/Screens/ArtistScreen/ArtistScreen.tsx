@@ -99,8 +99,6 @@ export default function ArtistScreen(props: ArtistScreenProps) {
                     <View style={styles.artistImgOverlay} />
                 </View>
 
-                {/* <PlayBtn /> */}
-
                 <View style={styles.content}>
                     <View style={styles.titleBoxOuterWrapper}>
                         <View style={styles.titleBoxContent}>
