@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Keyboard, Pressable, View } from 'react-native';
+import { Keyboard, ListRenderItemInfo, Pressable, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import ScreenWrapper from '../../global/Components/ScreenWrapper/ScreenWrapper';
@@ -10,7 +10,7 @@ import LoadingContainer from '../../global/UI/Components/LoadingSpinnerContainer
 import ImageListItem, { AlbumListItem, ArtistListItem, SongListItem } from '../../global/UI/Components/SongListItem/ImageListItem';
 import { textWrapperWidth, trackNumberWidth } from '../../global/UI/Components/SongListItem/ImageListItem.style';
 import { uiBase } from '../../global/UI/styles/uiBase.style';
-import { SpotifyFetcher, SpotifySearchResponse } from '../../utils';
+import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher, SpotifyPlaylist, SpotifySearchResponse, SpotifyTrack } from '../../utils';
 import { ScreenUtils } from '../../utils/ScreenUtils';
 import styles, { headerHeight, headerInputUnfocusedHeight, headerInputUnfocusedWidth, headerWidth } from "./SearchScreen.style";
 
@@ -59,12 +59,66 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
 
     return (
         <>
-            <LoadingContainer loading={data === null} hideDelay={500} style={{ zIndex: 10, top: ScreenUtils.statusBarHeight + headerHeight }}/>
+            <LoadingContainer loading={data === null} hideDelay={500} style={{ zIndex: 10, top: ScreenUtils.statusBarHeight + headerHeight }} />
 
-            <ScreenWrapper style={{ paddingTop: 0 }} stickyHeaderIndices={[0]} onScroll={() => setIsSearchBarFocused(false)}>
-                <SearchBar isFocused={isSearchBarFocused} setFocus={setIsSearchBarFocused} search={performSearch} />
+            <SearchBar isFocused={isSearchBarFocused} setFocus={setIsSearchBarFocused} search={performSearch} />
 
-                <View style={styles.tabs}>
+            <ScreenWrapper
+                style={{ paddingTop: 0 }}
+                onScroll={() => setIsSearchBarFocused(false)}
+                data={data?.[selectedTab]?.items ?? []}
+                renderItem={({ item, index }: ListRenderItemInfo<SpotifyAlbum | SpotifyArtist | SpotifyPlaylist | SpotifyTrack>) => {
+                    const commonData = {
+                        key: index,
+                        title: item?.name,
+                        image: item?.images?.[0]?.url,
+                        styles: {
+                            img: { width: 45, height: 45 }
+                        }
+                    }
+
+                    if (item?.type === "album") {
+                        return <AlbumListItem {...commonData} albumId={item?.id} />
+                    } else if (item?.type === "artist") {
+                        return <ArtistListItem {...commonData} artistId={item?.id} />
+                    } else if (item?.type === "playlist") {
+                        return <ImageListItem {...commonData}
+                            onPress={() => navigation.navigate("Playlist", { playlistId: item.id })}
+                            subtitle={`${item?.tracks?.total} ${item?.tracks?.total === 1 ? "song" : "songs"}`}
+                        />
+                    } else {
+                        return <SongListItem {...commonData}
+                            song={item}
+                            allSongsInQueue={data?.tracks?.items ?? []}
+                            songContext={{ type: "none" }}
+                            image={item?.album?.images?.[0]?.url}
+                            styles={{
+                                img: commonData.styles.img,
+                                textWrapper: {
+                                    width: textWrapperWidth + trackNumberWidth - uiBase.padding.appHorizontalPadding
+                                }
+                            }}
+                        />
+                    }
+                }}
+                headerComponent={(
+                    <View style={styles.tabs}>
+                        {tabs?.map((t, i) => {
+                            const isSelected = selectedTab === t.tab;
+
+                            return (
+                                <Pressable key={i} style={[styles.tab, {
+                                    borderColor: isSelected ? uiBase.colors.lime(1) : uiBase.colors.textSecondary,
+                                    backgroundColor: isSelected ? uiBase.colors.lime(0.7) : "transparent",
+                                }]} onPress={() => setSelectedTab(t.tab)}>
+                                    <AppText style={styles.tabText}>{t.title}</AppText>
+                                </Pressable>
+                            )
+                        })}
+                    </View>
+                )}
+            >
+                {/* <View style={styles.tabs}>
                     {tabs?.map((t, i) => {
                         const isSelected = selectedTab === t.tab;
 
@@ -77,10 +131,10 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                             </Pressable>
                         )
                     })}
-                </View>
+                </View> */}
 
                 {/* TRACKS */}
-                <View style={selectedTab !== "tracks" && { height: 0, overflow: "hidden" }}>
+                {/* <View style={selectedTab !== "tracks" && { height: 0, overflow: "hidden" }}>
                     {data?.tracks?.items?.map((t, i) => {
                         return (
                             <SongListItem
@@ -97,10 +151,10 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                             />
                         )
                     })}
-                </View>
+                </View> */}
 
                 {/* ARTISTS */}
-                <View style={selectedTab !== "artists" && { height: 0, overflow: "hidden" }}>
+                {/* <View style={selectedTab !== "artists" && { height: 0, overflow: "hidden" }}>
                     {data?.artists?.items?.map((a, i) => {
                         return (
                             <ArtistListItem
@@ -111,10 +165,10 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                             />
                         )
                     })}
-                </View>
+                </View> */}
 
                 {/* ALBUMS */}
-                <View style={selectedTab !== "albums" && { height: 0, overflow: "hidden" }}>
+                {/* <View style={selectedTab !== "albums" && { height: 0, overflow: "hidden" }}>
                     {data?.albums?.items?.map((a, i) => {
                         return (
                             <AlbumListItem
@@ -129,10 +183,10 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                             />
                         )
                     })}
-                </View>
+                </View> */}
 
                 {/* PLAYLISTS */}
-                <View style={selectedTab !== "playlists" && { height: 0, overflow: "hidden" }}>
+                {/* <View style={selectedTab !== "playlists" && { height: 0, overflow: "hidden" }}>
                     {data?.playlists?.items?.map((p, i) => {
                         const totalTracks = p.tracks?.total;
 
@@ -149,7 +203,7 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
                             />
                         )
                     })}
-                </View>
+                </View> */}
 
             </ScreenWrapper>
         </>
