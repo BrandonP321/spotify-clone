@@ -120,7 +120,10 @@ export default StyleSheet.create({
         height: 3
     },
     progressMarker: {
-        backgroundColor: uiBase.colors.textPrimary
+        backgroundColor: uiBase.colors.textPrimary,
+        height: 10,
+        width: 10,
+        top: 1
     },
     selectedTrack: {
         backgroundColor: uiBase.colors.textPrimary
