@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Spotify Clone",
-    "slug": "Spotify Clone",
+    "slug": "spotify-clone",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/stores/google-play/app-icon.png",
