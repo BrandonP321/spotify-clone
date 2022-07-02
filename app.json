@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "spotify-clone",
-    "slug": "spotify-clone",
+    "name": "Spotify Clone",
+    "slug": "Spotify Clone",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/stores/google-play/app-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/spotify-splash.png",
@@ -19,7 +19,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.brandonp321.spotifyclone"
+      "bundleIdentifier": "com.brandonp321.spotifyclone",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
