@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import { ListRenderItem, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, FlatListProps, ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
-import LoadingContainer from '../../UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
+import LoadingContainer, { screenLoadingAnimationDuration } from '../../UI/Components/LoadingSpinnerContainer/LoadingSpinnerContainer';
 import styles from "./ScreenWrapper.style";
 
 export type ScreenWrapperProps = {
@@ -16,6 +16,9 @@ export type ScreenWrapperProps = {
     headerComponent?: FlatListProps<any>["ListHeaderComponent"];
 }
 
+export const screenLoadingFadeDelay = 250;
+export const screenLoadingAnimationWithDelay = screenLoadingAnimationDuration + screenLoadingFadeDelay;
+
 export default function ScreenWrapper(props: ScreenWrapperProps) {
     const [showLoading, setShowLoading] = useState(props.loading === undefined ? false : true);
 
@@ -24,28 +27,30 @@ export default function ScreenWrapper(props: ScreenWrapperProps) {
         if (!props.loading) {
             setTimeout(() => {
                 setShowLoading(false);
-            }, 250)
+            }, screenLoadingFadeDelay)
         } else {
             setShowLoading(true);
         }
     }, [props.loading])
 
     return (
-        <View>
-            <LoadingContainer loading={showLoading}/>
-            <Animated.FlatList 
-                stickyHeaderIndices={props.stickyHeaderIndices} 
-                contentContainerStyle={[styles.pageWrapper, props.style]} 
-                bounces={false} 
-                overScrollMode={"never"} 
-                onScroll={props.onScroll} 
-                scrollEventThrottle={16}
-                data={props.data}
-                renderItem={props.renderItem}
-                ListHeaderComponent={props.headerComponent}
-                ListFooterComponent={() => <>{props.children}</>}
-            >
-            </Animated.FlatList>
-        </View>
+        <>
+            <LoadingContainer loading={showLoading} />
+            <View>
+                <Animated.FlatList
+                    stickyHeaderIndices={props.stickyHeaderIndices}
+                    contentContainerStyle={[styles.pageWrapper, props.style]}
+                    bounces={false}
+                    overScrollMode={"never"}
+                    onScroll={props.onScroll}
+                    scrollEventThrottle={16}
+                    data={props.data}
+                    renderItem={props.renderItem}
+                    ListHeaderComponent={props.headerComponent}
+                    ListFooterComponent={() => <>{props.children}</>}
+                >
+                </Animated.FlatList>
+            </View>
+        </>
     )
 }

@@ -12,7 +12,6 @@ export default StyleSheet.create({
     animationWrapper: {
         position: "absolute",
         right: uiBase.padding.appHorizontalPadding,
-        // top: playIconPositionTop,
         zIndex: 1100
     },
     playIconPressable: {

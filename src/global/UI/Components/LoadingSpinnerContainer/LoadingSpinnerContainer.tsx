@@ -13,6 +13,8 @@ type LoadingContainerProps = {
   hideDelay?: number;
 }
 
+export const screenLoadingAnimationDuration = 150;
+
 export default function LoadingContainer(props: LoadingContainerProps) {
   const animOpacity = useSharedValue(1);
   const spinnerRotation = useSharedValue(0);
@@ -36,7 +38,7 @@ export default function LoadingContainer(props: LoadingContainerProps) {
       setTimeout(() => {
         // else apply fade out animation to loading container
         animOpacity.value = withTiming(0, {
-          duration: 150
+          duration: screenLoadingAnimationDuration
         })
         // cancel spinner animation after loading container has faded out
         setTimeout(() => {
