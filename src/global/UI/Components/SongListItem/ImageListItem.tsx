@@ -101,7 +101,7 @@ export const SongListItem = function(props: SongListItemProps) {
     }
 
     return (
-        <ImageListItem {...rest} styles={itemStyles} onPress={handlePress} onMoreBtnPress={handleMoreBtnPress}/>
+        <ImageListItem {...rest} styles={itemStyles} onPress={handlePress}/>
     )
 }
 
