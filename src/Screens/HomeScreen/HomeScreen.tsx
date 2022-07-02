@@ -6,6 +6,9 @@ import HorizontalScrollWrapper from '../../global/UI/Components/HorizontalScroll
 import { AuthUtils } from '../../utils';
 import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher, SpotifyPlaylist, SpotifyTrack } from '../../utils/SpotifyFetcher';
 import * as SplashScreen from "expo-splash-screen";
+import { LinearGradient } from 'expo-linear-gradient'
+import { uiBase } from '../../global/UI/styles/uiBase.style'
+import styles from "./HomeScreen.style";
 
 type HomeScreenProps = ScreenProps<"Home">
 
@@ -38,8 +41,16 @@ export default function HomeScreen(props: HomeScreenProps) {
   }, [userPlaylists, favoriteArtists]);
 
   return (
-    <ScreenWrapper>
-      <HorizontalScrollWrapper heading={"Your playlists"}>
+    <ScreenWrapper style={styles.screenWrapper}>
+      <LinearGradient 
+        colors={["rgba(244, 11, 70, 0.25)", "rgba(244, 11, 70, 0)"]} 
+        locations={[0, 0.5]}
+        style={styles.screenTopGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+
+      <HorizontalScrollWrapper heading={"Your playlists"} style={{ container: { marginTop: uiBase.padding.appTopPadding } }}>
         {userPlaylists?.map((playlist, i) => {
 
           return (
