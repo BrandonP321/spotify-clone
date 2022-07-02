@@ -1,10 +1,10 @@
 import { useNavigation, CommonActions, StackActions } from '@react-navigation/native';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, ImageStyle, Pressable, StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { SpotifyAlbum, SpotifyArtist, SpotifyPlaylist, SpotifyTrack } from '../../../../utils';
 import { NavigationHelper, useAppNavigation } from '../../../../utils/NavigationHelper';
 import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
-import { getQueueFromSongList, playSong } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
+import { getQueueFromSongList, playSong, SongItem } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { RootStackParamList } from '../../../Navigation/Screens';
 import { uiBase } from '../../styles/uiBase.style';
 import { AppHeading, AppText } from '../AppText/AppText';
@@ -134,12 +134,18 @@ type SongActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRightM
 
 export const SongActionCard = (props: SongActionCardProps) => {
     const { customStyles, songData, songsForQueue, ...rest } = props;
+    const [queue, setQueue] = useState<SongItem[]>([]);
+    const [indexInQueue, setIndexInQueue] = useState(0);
 
     const player = useMusicPlayer();
     const dispatch = useAppDispatch();
 
-    const queue = getQueueFromSongList(songsForQueue, { type: "none" });
-    const indexInQueue = queue.findIndex(s => s.id === songData?.id);
+    useEffect(() => {
+        getQueueFromSongList(songsForQueue, { type: "none" }).then((q) => {
+            setQueue(q);
+            setIndexInQueue(q.findIndex(s => s.id === songData?.id));
+        })
+    }, [songsForQueue])
 
     const handlePress = () => {
         dispatch(playSong({ queue, indexInQueue }));

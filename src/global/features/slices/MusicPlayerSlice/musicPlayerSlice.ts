@@ -49,10 +49,15 @@ const musicPlayerSlice = createSlice({
 
 			const song = queue[indexInQueue];
 
+			// if new song is from new queue, update queue
+			if (song.context?.type !== state.currentSong?.context?.type || getSongContextId(song) !== getSongContextId(state.currentSong)) {
+				state.queue = queue;
+			}
+
+			state.isPaused = false;
 			state.currentSong = song;
 			state.currentSongIndex = indexInQueue;
-			state.isPaused = false;
-			state.queue = queue
+			
 		},
 		resumeSong: (state) => {
 			state.isPaused = false;
@@ -77,6 +82,17 @@ const musicPlayerSlice = createSlice({
 	}
 });
 
+const getSongContextId = (song: SongItem) => {
+	switch (song.context.type) {
+		case "album":
+			return song.context.albumId;
+		case "artist":
+			return song.context.artistId;
+		case "playlist":
+			return song.context.playlistId;
+	}
+}
+
 export const { playSong, pauseSong, playNextSong, playPrevSong, resumeSong } = musicPlayerSlice.actions;
 export default musicPlayerSlice.reducer;
 
@@ -91,6 +107,8 @@ export const getQueueItemFromSong: (songs: SpotifyTrack, context: SongItem["cont
 })
 
 /* helper function to generate song queue from list of songs */
-export const getQueueFromSongList: (songs: SpotifyTrack[], context: SongItem["context"]) => SongItem[] = (songs, context) => {
-	return songs?.map(s => getQueueItemFromSong(s, context));
+export const getQueueFromSongList: (songs: SpotifyTrack[], context: SongItem["context"]) => Promise<SongItem[]> = (songs, context) => {
+	return new Promise((resolve, reject) => {
+		return resolve(songs?.map(s => getQueueItemFromSong(s, context)));
+	})
 }

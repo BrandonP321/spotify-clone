@@ -5,7 +5,7 @@ import { Image, ImageStyle, ListRenderItemInfo, Pressable, StyleProp, Text, View
 import Animated, { interpolate, SharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import ScreenWrapper from "../../global/Components/ScreenWrapper/ScreenWrapper";
 import { useAppDispatch, useMusicPlayer } from "../../global/features/hooks";
-import { getQueueFromSongList, playSong } from "../../global/features/slices/MusicPlayerSlice/musicPlayerSlice";
+import { getQueueFromSongList, playSong, SongItem } from "../../global/features/slices/MusicPlayerSlice/musicPlayerSlice";
 import { ScreenProps } from "../../global/Navigation/Screens"
 import { AlbumActionCard } from "../../global/UI/Components/ActionCard/ActionCard";
 import { AppHeading, AppText } from "../../global/UI/Components/AppText/AppText";
@@ -16,7 +16,7 @@ import { PlayIconBtn } from "../../global/UI/Components/PlayBtn/PlayIconBtn";
 import SimpleHeader from "../../global/UI/Components/SimpleHeader/SimpleHeader";
 import { ArtistListItem, SongListItem } from "../../global/UI/Components/SongListItem/ImageListItem";
 import { uiBase } from "../../global/UI/styles/uiBase.style";
-import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher } from "../../utils";
+import { SpotifyAlbum, SpotifyArtist, SpotifyFetcher, SpotifyTrack } from "../../utils";
 import { useAppNavigation } from "../../utils/NavigationHelper";
 import styles from "./AlbumScreen.style";
 
@@ -32,9 +32,11 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     const scrollOffset = useSharedValue(0);
 
     const [data, setData] = useState<SpotifyAlbum | null>(null);
+    const [modifiedTracks, setModifiedTracks] = useState<SpotifyTrack[] | null>(null);
     const [otherAlbums, setOtherAlbums] = useState<SpotifyAlbum[] | null>(null);
     const [allArtists, setAllArtists] = useState<SpotifyArtist[] | null>(null);
     const [albumTitleHeight, setAlbumTitleHeight] = useState(0);
+    const [queue, setQueue] = useState<SongItem[]>([]);
     const albumTitleEle = React.createRef<Text>();
 
     useFocusEffect(useCallback(() => {
@@ -53,15 +55,32 @@ const AlbumScreen = (props: AlbumScreenProps) => {
             setData(null);
             setOtherAlbums(null);
             setAllArtists(null);
+            setModifiedTracks(null);
         }
     }, [albumId]));
+
+    useEffect(() => {
+
+    })
 
     useEffect(() => {
         /* After content loads, get height of album title text */
         albumTitleEle.current?.measure((x, y, w, h) => {
             setAlbumTitleHeight(h ?? 0);
         });
+
+        data && setModifiedTracks(data?.tracks?.items?.map(item => ({
+            ...item,
+            album: {
+                ...item.album,
+                images: data.images
+            }
+        })))
     }, [data])
+
+    useEffect(() => {
+        modifiedTracks && data && getQueueFromSongList(modifiedTracks, { type: "album", albumId: data.id, albumName: data.name }).then(setQueue)
+    }, [modifiedTracks])
 
     const goToArtist = () => {
         const artistId = data?.artists?.[0]?.id;
@@ -71,19 +90,8 @@ const AlbumScreen = (props: AlbumScreenProps) => {
 
     const releaseDate = `Album - ${data?.release_date?.split("-")?.[0]}`;
 
-    const modifiedTracks = React.useMemo(() => data?.tracks?.items?.map(item => ({
-        ...item,
-        album: {
-            ...item.album,
-            images: data.images
-        }
-    })), [data])
-
     const handlePlayBtnPress = () => {
-        modifiedTracks && data && dispatch(playSong({
-            queue: getQueueFromSongList(modifiedTracks, { type: "album", albumId: data.id, albumName: data.name }),
-            indexInQueue: 0
-        }))
+        modifiedTracks && data && dispatch(playSong({ queue, indexInQueue: 0}))
     }
 
     return (
@@ -102,7 +110,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
                 loading={!data ?? !allArtists ?? !otherAlbums}
                 scrollOffset={scrollOffset}
                 data={modifiedTracks ?? []}
-                renderItem={({ item: song, index }: ListRenderItemInfo<Exclude<typeof modifiedTracks, undefined>[number]>) => {
+                renderItem={({ item: song, index }: ListRenderItemInfo<Exclude<typeof modifiedTracks, null>[number]>) => {
                     return (
                         <SongListItem
                             key={index}

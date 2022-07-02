@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { View, Text, Image, ListRenderItemInfo } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { useAppDispatch, useMusicPlayer } from '../../global/features/hooks';
-import { getQueueFromSongList, playSong } from '../../global/features/slices/MusicPlayerSlice/musicPlayerSlice';
+import { getQueueFromSongList, playSong, SongItem } from '../../global/features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { ScreenProps } from '../../global/Navigation/Screens'
 import { AppHeading, AppText } from '../../global/UI/Components/AppText/AppText';
 import CoverImgScreenWrapper from '../../global/UI/Components/CoverImgScreen/CoverImgScreenWrapper';
@@ -20,6 +20,7 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
 
     const dispatch = useAppDispatch();
     const player = useMusicPlayer();
+    const [queue, setQueue] = useState<SongItem[]>([]);
 
     const scrollOffset = useSharedValue(0);
 
@@ -45,13 +46,12 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
         playlistTitleEle.current?.measure((x, y, w, h) => {
             setAlbumTitleHeight(h ?? 0);
         });
-    }, [data])
+
+        data && getQueueFromSongList(data.tracks.items.map(item => item.track), { type: "playlist", playlistId: data.id, playlistName: data.name }).then(setQueue)
+    }, [data]);
 
     const handlePlayBtnPress = () => {
-        data && dispatch(playSong({
-            queue: getQueueFromSongList(data.tracks.items.map(item => item.track), { type: "playlist", playlistId: data.id, playlistName: data.name }),
-            indexInQueue: 0
-        }))
+        dispatch(playSong({  queue, indexInQueue: 0 }))
     }
 
     const numbFollowers = data?.followers?.total ?? 0;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, View, Image, StyleProp, ViewStyle, ImageStyle, TextStyle } from 'react-native';
 import { useAppNavigation } from '../../../../utils/NavigationHelper';
 import { AppText } from '../AppText/AppText';
@@ -6,7 +6,7 @@ import styles from "./ImageListItem.style";
 import EllipsisIcon from "../../../../../assets/ellipsis-vertical.svg";
 import { uiBase } from '../../styles/uiBase.style';
 import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
-import { getQueueFromSongList, getQueueItemFromSong, MusicPlayerState, playSong, SongContext } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
+import { getQueueFromSongList, getQueueItemFromSong, MusicPlayerState, playSong, SongContext, SongItem } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
 import { SpotifyTrack } from '../../../../utils';
 
 type ImageListItemProps = {
@@ -73,13 +73,18 @@ export const SongListItem = function(props: SongListItemProps) {
     const dispatch = useAppDispatch();
     const player = useMusicPlayer();
 
-    const handlePress = () => {
-        const queue = getQueueFromSongList(allSongsInQueue, songContext)
+    const [queue, setQueue] = useState<SongItem[]>([]);
+    const [indexInQueue, setIndexInQueue] = useState(0);
 
-        dispatch(playSong({
-            queue,
-            indexInQueue: queue.findIndex(s => s.id === song?.id)
-        }));
+    useEffect(() => {
+        getQueueFromSongList(allSongsInQueue, songContext).then(q => {
+            setQueue(q);
+            setIndexInQueue(q.findIndex(s => s.id === song?.id));
+        })
+    }, [allSongsInQueue, song])
+
+    const handlePress = () => {
+        dispatch(playSong({ queue, indexInQueue }));
     }
 
     const handleMoreBtnPress = () => {
