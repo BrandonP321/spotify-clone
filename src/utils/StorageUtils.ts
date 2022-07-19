@@ -3,6 +3,7 @@ import {setItemAsync as setSecureItem, getItemAsync as getSecureItem} from "expo
 import { AllStorageKeys, AsyncStorageTypes, SecureAsyncStorageTypes, ValidSecureStorageKey, ValidAsyncStorageKey } from "./StorageValues";
 
 export class StorageUtils {
+    /** Stores token using asynce storage, encrypting the data if specified */
     private static storeItem(key: ValidSecureStorageKey, value: SecureAsyncStorageTypes[typeof key], secure: boolean): Promise<boolean>
     private static storeItem(key: ValidAsyncStorageKey, value: AsyncStorageTypes[typeof key]): Promise<boolean>
     private static storeItem(key: ValidSecureStorageKey | ValidAsyncStorageKey, value: any, secure?: boolean) {
@@ -25,6 +26,7 @@ export class StorageUtils {
         })
     }
 
+    /** Gets item from async storage, decrypting the data if necessary */
     private static async getItem(key: ValidAsyncStorageKey): Promise<AsyncStorageTypes[typeof key] | null>;
     private static async getItem(key: ValidSecureStorageKey, secure: boolean): Promise<SecureAsyncStorageTypes[typeof key] | null>;
     private static async getItem(key: ValidSecureStorageKey | ValidAsyncStorageKey, secure?: boolean) {

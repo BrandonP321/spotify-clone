@@ -22,6 +22,9 @@ type MusicPlayerModalProps = {
     hide: () => void;
 }
 
+/**
+ * Music Player modal with controls for interacting with the song that is currently being played
+ */
 export default function MusicPlayerModal(props: MusicPlayerModalProps) {
     const { show, hide } = props;
 
@@ -29,6 +32,7 @@ export default function MusicPlayerModal(props: MusicPlayerModalProps) {
 
     const modalTopPosition = useSharedValue(ScreenUtils.vh);
 
+    /* status of overlay covering album image for song */
     const [showModalOverlay, setShowModalOverlay] = useState(true);
 
     /* When user presses native android back btn, close modal if open */
@@ -39,6 +43,7 @@ export default function MusicPlayerModal(props: MusicPlayerModalProps) {
     }, [])
 
     useEffect(() => {
+        // hide or show modal with animation depending on the status of the modal
         modalTopPosition.value = withTiming(show ? 0 : ScreenUtils.vh, {
             duration: 300,
         })
@@ -47,6 +52,7 @@ export default function MusicPlayerModal(props: MusicPlayerModalProps) {
             // when modal is visible, add custom behavior to android back btn to close modal
             BackHandler.addEventListener("hardwareBackPress", onBackPress);
         } else {
+            // else remove listener
             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
         }
     }, [show])
@@ -84,6 +90,9 @@ type PlayerModalOverlayProps = {
     songContext?: SongContext;
 }
 
+/**
+ * Semi-transparent overlay covering album image for song
+ */
 const PlayerModalOverlay = (props: PlayerModalOverlayProps) => {
     const { children, toggleOverlay, showOverlay, hideModal, songContext } = props;
 
@@ -101,7 +110,8 @@ const PlayerModalOverlay = (props: PlayerModalOverlayProps) => {
     const animStyles = useAnimatedStyle(() => ({
         opacity: overlayOpacity.value
     }))
-
+    
+    // play next or previous song based on direction user swipes
     const handleSwipe = (e: HandlerStateChangeEvent<Record<string, unknown>>) => {
         const deltaY = e.nativeEvent.translationY as number;
         const deltaX = e.nativeEvent.translationX as number;

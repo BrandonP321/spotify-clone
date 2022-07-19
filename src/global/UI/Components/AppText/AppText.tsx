@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
     }
 })
 
+/**
+ * Replaces <Text> component to allow for a global font family to be applied across app
+ */
 export const AppText = React.forwardRef<Text, AppTextProps>((props, ref) => {
     const { children, style, ...rest } = props;
 
@@ -30,6 +33,9 @@ export const AppText = React.forwardRef<Text, AppTextProps>((props, ref) => {
 export type AppHeadingProps = AppTextProps & {
 }
 
+/**
+ * Applies common styles to <AppText> for app headings
+ */
 export const AppHeading = React.forwardRef<Text, AppHeadingProps>((props: AppHeadingProps, ref) => {
     const { style, ...rest } = props;
 

@@ -1,5 +1,3 @@
-import { Falsy } from "react-native";
-
 export class URLUtils {
     /* appends query param/value to url string */
     public static addQueryParam = (url: string, queryParam: string, value: string) => {

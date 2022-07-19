@@ -9,6 +9,7 @@ export class AuthUtils {
         // attempt to grab tokens from storage
         const aToken = await StorageUtils.getSecureItemAsync("accessToken");
         const rToken = await StorageUtils.getSecureItemAsync("refreshToken");
+        // current scope required from Spotify web API
         const currentScope = await StorageUtils.getItemAsync("currentAPIScope");
 
         // if no tokens found or user doesn't have appropriate scope for spotify api, have user re-auth
@@ -26,7 +27,7 @@ export class AuthUtils {
     }
 
     public static haveUserAuth = async () => {
-        // open auth window so have user sign in, which returns the spotify auth code
+        // open auth window to have user sign in, which returns the spotify auth code
         const authCode = await this.openAuthWindow();
 
         if (authCode) {
@@ -42,8 +43,11 @@ export class AuthUtils {
         }
     }
 
+    /** Opens auth window to Spotify's auth page, returning user's Auth code */
     public static openAuthWindow = async () => {
+        // spotify client id
         const clientId = "13786cced89e4dba9de0f15126c86c1f";
+        // redirect uri for app home screen
         const redirectURI = Linking.createURL("");  
         
         type BrowserResponse = WebBrowser.WebBrowserAuthSessionResult & { url?: string };

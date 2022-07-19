@@ -5,20 +5,27 @@ import LoadingContainer, { screenLoadingAnimationDuration } from '../../UI/Compo
 import styles from "./ScreenWrapper.style";
 
 export type ScreenWrapperProps = {
+    /* Children to render as the footer component of the ScreenWrapper's FlatList */
     children?: FlatListProps<any>["ListFooterComponent"] | FlatListProps<any>["ListFooterComponent"][];
     style?: StyleProp<ViewStyle>;
     onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
     stickyHeaderIndices?: number[];
+    /* Shows full screen loading spinner if true */
     loading?: boolean;
     scrollViewRef?: React.LegacyRef<ScrollView>;
+    /* Data to be loaded by FlatList */
     data?: any[];
     renderItem?: (item: ListRenderItemInfo<any>) => any;
+    /* FlatList header component to render above rendered data */
     headerComponent?: FlatListProps<any>["ListHeaderComponent"];
 }
 
 export const screenLoadingFadeDelay = 250;
 export const screenLoadingAnimationWithDelay = screenLoadingAnimationDuration + screenLoadingFadeDelay;
 
+/**
+ * Wrapper for all screen content, using a FlatList to render header, footer, and data components.
+ */
 export default function ScreenWrapper(props: ScreenWrapperProps) {
     const [showLoading, setShowLoading] = useState(props.loading === undefined ? false : true);
 
@@ -29,6 +36,7 @@ export default function ScreenWrapper(props: ScreenWrapperProps) {
                 setShowLoading(false);
             }, screenLoadingFadeDelay)
         } else {
+            // else instantly show loading spinner
             setShowLoading(true);
         }
     }, [props.loading])

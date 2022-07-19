@@ -8,6 +8,7 @@ const initialState: AuthState = {
 	accessToken: null
 }
 
+/* Slice containing user auth data */
 const authSlice = createSlice({
     name: "auth",
     initialState,

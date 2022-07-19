@@ -15,6 +15,9 @@ type LoadingContainerProps = {
 
 export const screenLoadingAnimationDuration = 150;
 
+/**
+ * Full screen loading spinner
+ */
 export default function LoadingContainer(props: LoadingContainerProps) {
   const animOpacity = useSharedValue(1);
   const spinnerRotation = useSharedValue(0);

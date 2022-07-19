@@ -14,6 +14,9 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 
 type Props = {}
 
+/**
+ * Floating bar at the bottom of the screen with the song being played
+ */
 export default (props: Props) => {
     const dispatch = useAppDispatch();
 
@@ -22,20 +25,18 @@ export default (props: Props) => {
     const [showPlayerModal, setShowPlayerModal] = useState(false);
 
     useEffect(() => {
-        
-    }, [])
-
-    useEffect(() => {
         /* Animated player in from bottom of screen when song has been chosen to play */
         animBottomPosition.value = withTiming(player.currentSong ? uiBase.heights.tabBarHeight : uiBase.heights.floatingMusicPlayerHeight * -1, {
             duration: 250,
         })
     }, [player.currentSong, player.currentSong?.id]);
 
+    /** Toggles display status of music player modal */
     const togglePlayerModal = useCallback(() => {
         setShowPlayerModal(!showPlayerModal);
     }, [showPlayerModal])
 
+    /* Toggles play/pause state of song */
     const togglePlayState = useCallback(() => {
         dispatch(player.isPaused ? resumeSong() : pauseSong());
     }, [player.isPaused])
@@ -48,8 +49,10 @@ export default (props: Props) => {
         albumImg, artist, title, id: songId
     } = player.currentSong ?? {};
 
+    // icon to be displayed based on whether song is paused or not
     const PlayStateIcon = player.isPaused ? PlayIcon : PauseIcon;
 
+    // play next or previous song based on direction user swipes
     const handleSwipe = (e: HandlerStateChangeEvent<Record<string, unknown>>) => {
         const deltaY = e.nativeEvent.translationY as number;
         const deltaX = e.nativeEvent.translationX as number;

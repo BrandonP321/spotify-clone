@@ -31,12 +31,16 @@ const AlbumScreen = (props: AlbumScreenProps) => {
 
     const scrollOffset = useSharedValue(0);
 
+    /* Album data */
     const [data, setData] = useState<SpotifyAlbum | null>(null);
     const [modifiedTracks, setModifiedTracks] = useState<SpotifyTrack[] | null>(null);
     const [otherAlbums, setOtherAlbums] = useState<SpotifyAlbum[] | null>(null);
     const [allArtists, setAllArtists] = useState<SpotifyArtist[] | null>(null);
+    /* Height of album title <Text> element, used to adjust position of play button */
     const [albumTitleHeight, setAlbumTitleHeight] = useState(0);
+    /* Queue of all songs in album for music player */
     const [queue, setQueue] = useState<SongItem[]>([]);
+
     const albumTitleEle = React.createRef<Text>();
 
     useFocusEffect(useCallback(() => {
@@ -46,7 +50,7 @@ const AlbumScreen = (props: AlbumScreenProps) => {
             SpotifyFetcher.getSeveralArtists(album.artists?.map(a => a.id)).then(setAllArtists)
             SpotifyFetcher.getArtistAlbums(album.artists?.[0]?.id).then(({ items: albums }) => {
 
-                // filter out current album from artists albums and update state
+                // filter out current album from artist's albums and update state
                 albums && setOtherAlbums(albums?.filter(a => a.id !== album.id)?.slice(0, 6))
             })
         });
@@ -60,15 +64,12 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     }, [albumId]));
 
     useEffect(() => {
-
-    })
-
-    useEffect(() => {
         /* After content loads, get height of album title text */
         albumTitleEle.current?.measure((x, y, w, h) => {
             setAlbumTitleHeight(h ?? 0);
         });
 
+        // modify tracks to include the album image of the current album
         data && setModifiedTracks(data?.tracks?.items?.map(item => ({
             ...item,
             album: {
@@ -79,9 +80,11 @@ const AlbumScreen = (props: AlbumScreenProps) => {
     }, [data])
 
     useEffect(() => {
+        // once tracks have been modified to include album image, update queue for music player
         modifiedTracks && data && getQueueFromSongList(modifiedTracks, { type: "album", albumId: data.id, albumName: data.name }).then(setQueue)
     }, [modifiedTracks])
 
+    /** Navigate to artist screen for album's artist artist */
     const goToArtist = () => {
         const artistId = data?.artists?.[0]?.id;
 

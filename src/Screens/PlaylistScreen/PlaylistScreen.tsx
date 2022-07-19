@@ -26,7 +26,8 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
 
     const [data, setData] = useState<SpotifyPlaylist | null>(null);
     const [owner, setOwner] = useState<SpotifyUser | null>(null);
-    const [albumTitleHeight, setAlbumTitleHeight] = useState(0);
+    /* Height of playlist title <Text> ele, used for adjusting height of play button */
+    const [playlistTitleHeight, setPlaylistTitleHeight] = useState(0);
     const playlistTitleEle = React.createRef<Text>();
 
     useFocusEffect(useCallback(() => {
@@ -44,7 +45,7 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
     useEffect(() => {
         /* After content loads, get height of album title text */
         playlistTitleEle.current?.measure((x, y, w, h) => {
-            setAlbumTitleHeight(h ?? 0);
+            setPlaylistTitleHeight(h ?? 0);
         });
 
         data && getQueueFromSongList(data.tracks.items.map(item => item.track), { type: "playlist", playlistId: data.id, playlistName: data.name }).then(setQueue)
@@ -62,7 +63,7 @@ export default function PlaylistScreen({ navigation, route }: PlaylistScreenProp
                 onPress={handlePlayBtnPress}
                 style={styles.playBtn}
                 scrollOffset={scrollOffset}
-                top={topContentHeight + albumTitleHeight}
+                top={topContentHeight + playlistTitleHeight}
                 pauseOnClick={player.currentSong?.context?.type === "playlist" && player.currentSong?.context?.playlistId === data?.id}
             />
 

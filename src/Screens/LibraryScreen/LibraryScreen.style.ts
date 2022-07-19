@@ -16,7 +16,6 @@ export default StyleSheet.create({
     },
     headerContent: {
         backgroundColor: uiBase.colors.appBg(1),
-        // TODO: add ios box shadow
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         elevation: 10,
@@ -53,6 +52,5 @@ export default StyleSheet.create({
     },
     tabText: {
         lineHeight: 16
-
     },
 })

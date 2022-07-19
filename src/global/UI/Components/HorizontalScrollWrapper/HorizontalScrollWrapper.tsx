@@ -12,6 +12,9 @@ type HorizontalScrollWrapperProps = {
     }
 }
 
+/**
+ * Wrapper for any horizontal scroll elements with an optional heading
+ */
 export default function HorizontalScrollWrapper(props: HorizontalScrollWrapperProps) {
     const {
         children, heading, style

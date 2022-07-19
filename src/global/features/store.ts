@@ -1,11 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import pageLoadingReducer from "./slices/PageLoadingSlice/pageLoadingSlice";
 import musicPlayerReducer from "./slices/MusicPlayerSlice/musicPlayerSlice";
 
 export const store = configureStore({
 	/* object of slice reducers to be combined */
 	reducer: {
-		pageLoading: pageLoadingReducer,
 		musicPlayer: musicPlayerReducer
 	}
 })

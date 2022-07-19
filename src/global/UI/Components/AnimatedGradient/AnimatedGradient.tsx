@@ -21,6 +21,9 @@ type AnimatedGradientProps = Omit<LinearGradientProps, "style"> & {
     }
 }
 
+/**
+ * Gradient with animated opacity
+ */
 export default function AnimatedGradient(props: AnimatedGradientProps) {
     const { scrollOffset, opacityInterpolationInput, style, ...rest} = props;
 

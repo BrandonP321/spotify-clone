@@ -33,10 +33,12 @@ export default function SearchScreen({ navigation, route }: SearchScreenProps) {
     useFocusEffect(useCallback(() => {
         // subscribe to keyboard events
         const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            // blur() search bar when keyboard is hidden
             setIsSearchBarFocused(false)
         })
 
         if (!data) {
+            // default back to 'tracks' tab
             setSelectedTab("tracks");
             setTimeout(() => {
                 setIsSearchBarFocused(true);

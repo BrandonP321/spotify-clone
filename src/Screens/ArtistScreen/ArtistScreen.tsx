@@ -25,10 +25,12 @@ export default function ArtistScreen(props: ArtistScreenProps) {
     const dispatch = useAppDispatch();
     const player = useMusicPlayer();
 
+    /* Artist's data */
     const [data, setData] = useState<SpotifyArtist | null>(null);
     const [topTracks, setTopTracks] = useState<SpotifyTrack[] | null>(null);
     const [albums, setAlbums] = useState<SpotifyAlbum[] | null>(null);
     const [relatedArtists, setRelatedArtists] = useState<SpotifyArtist[] | null>(null);
+    /* Queue for music player */
     const [queue, setQueue] = useState<SongItem[]>([]);
 
     const scrollViewRef = useRef<ScrollView | null>(null);

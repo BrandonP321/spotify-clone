@@ -3,12 +3,12 @@ import { SpotifyFetcher, StorageUtils } from ".";
 import { JWTUTils } from "./JWTUtils";
 
 export class APIFetcher {
-    // TODO: use different values based on environment
-    // public static APIDomain = "http://10.0.0.253:8000";
     public static APIDomain = "https://brandonp-spotify-server.herokuapp.com";
-    // public static APIDomain = "http://192.168.1.250:8000";
     public static SpotifyAPIDomain = "https://api.spotify.com/v1"
 
+    /** 
+     * Makes axios get request, refreshing access token and re-attempting fetch if access token expires
+     */
     public static get = async <T extends {}>(url: string, config?: AxiosRequestConfig) => {
         return new Promise<T>(async (resolve, reject) => {
             try {
@@ -50,20 +50,6 @@ export class APIFetcher {
     
                 resolve(response?.data);
             } catch (err: any) {
-
-                // 401 status means access token is expired
-                if (err.status === 401) {
-                    // make request to refresh token
-                    try {
-                        const newTokens = await SpotifyFetcher.getRefreshedToken();
-
-                        // assuming token refresh was successful, store new Tokens;
-
-                    } catch (err) {
-                        return reject(err);
-                    }
-                }
-
                 reject(err as AxiosError<any, any>)
             }
         })
@@ -77,7 +63,6 @@ export class APIFetcher {
         return {
             ...config,
             headers: {
-                // TODO: use token from redux store instead of async storage
                 Authorization: `Bearer ${aToken}`,
                 ...(config.headers ?? {})
             }

@@ -6,8 +6,4 @@ export class ScreenUtils {
     public static vw = this.window.width;
     public static statusBarHeight = getStatusBarHeight();
     public static vh = this.window.height + this.statusBarHeight;
-
-    public static getScreenTitle() {
-        
-    }
 }

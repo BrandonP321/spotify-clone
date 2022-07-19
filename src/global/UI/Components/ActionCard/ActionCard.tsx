@@ -2,10 +2,9 @@ import { useNavigation, CommonActions, StackActions } from '@react-navigation/na
 import React, { useEffect, useState } from 'react'
 import { Image, ImageStyle, Pressable, StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { SpotifyAlbum, SpotifyArtist, SpotifyPlaylist, SpotifyTrack } from '../../../../utils';
-import { NavigationHelper, useAppNavigation } from '../../../../utils/NavigationHelper';
+import { useAppNavigation } from '../../../../utils/NavigationHelper';
 import { useAppDispatch, useMusicPlayer } from '../../../features/hooks';
 import { getQueueFromSongList, playSong, SongItem } from '../../../features/slices/MusicPlayerSlice/musicPlayerSlice';
-import { RootStackParamList } from '../../../Navigation/Screens';
 import { uiBase } from '../../styles/uiBase.style';
 import { AppHeading, AppText } from '../AppText/AppText';
 import styles from "./ActionCard.style";
@@ -24,6 +23,9 @@ type ActionCardProps = {
     withoutRightMargin?: boolean;
 }
 
+/**
+ * Displays an image with a title and subitle beneath it with onPress options
+ */
 export default function ActionCard(props: ActionCardProps) {
     const {
         customStyles, blurb, img, title, withoutRightMargin, onPress
@@ -59,6 +61,9 @@ type ArtistActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRigh
     artistData: SpotifyArtist;
 }
 
+/**
+ * Renders ActionCard and navigates to artist screen for specified artist on press
+ */
 export const ArtistActionCard = (props: ArtistActionCardProps) => {
     const { customStyles, artistData, ...rest } = props;
 
@@ -83,6 +88,9 @@ type AlbumActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRight
     albumData: SpotifyAlbum;
 }
 
+/**
+ * Renders ActionCard and navigates to album screen for specified album on press
+ */
 export const AlbumActionCard = (props: AlbumActionCardProps) => {
     const { customStyles, albumData, ...rest } = props;
 
@@ -107,6 +115,9 @@ type PlaylistActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRi
     playlistData: SpotifyPlaylist;
 }
 
+/**
+ * Renders ActionCard and navigates to playlist screen for specified playlist on press
+ */
 export const PlaylistActionCard = (props: PlaylistActionCardProps) => {
     const { customStyles, playlistData, ...rest } = props;
 
@@ -132,6 +143,9 @@ type SongActionCardProps = Pick<ActionCardProps, "customStyles" | "withoutRightM
     songsForQueue: SpotifyTrack[];
 }
 
+/**
+ * Renders ActionCard and plays clicked song on press
+ */
 export const SongActionCard = (props: SongActionCardProps) => {
     const { customStyles, songData, songsForQueue, ...rest } = props;
     const [queue, setQueue] = useState<SongItem[]>([]);

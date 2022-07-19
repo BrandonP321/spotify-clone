@@ -17,6 +17,9 @@ type PlayIconBtnProps = {
     pauseOnClick?: boolean;
 }
 
+/**
+ * Play btn that sticks to bottom of header.  Plays/Pauses current song
+ */
 export const PlayIconBtn = (props: PlayIconBtnProps) => {
     const dispatch = useAppDispatch();
     const player = useMusicPlayer();
